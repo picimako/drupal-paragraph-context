@@ -1,18 +1,20 @@
 package org.picimako.drupal.context;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a Component in the component tree, storing
+ * Represents a Component (paragraph or modifier) in the component tree, storing
  * <ul>
  *     <li>the level of the component to be able to properly link parent and child components,
  *     and calculate occurrence count,</li>
  *     <li>the type of the component, so that they can be converted to {@link ComponentContextSelector}s,</li>
  *     <li>the occurrence count under its parent, so that the component context selectors can be indexed properly.</li>
+ *     <li>whether this node is a modifier or a paragraph</li>
  * </ul>
  */
 @Getter
@@ -21,6 +23,8 @@ public class ComponentNode implements Node {
     private final int level;
     private final NodeType type;
     private long occurrenceCountUnderParent = 1;
+    @Setter
+    private boolean isModifierNode;
 
     /**
      * Creates a new {@link ComponentNode}.
@@ -43,7 +47,7 @@ public class ComponentNode implements Node {
      */
     public void setOccurrenceCountUnderParent(long occurrenceCountUnderParent) {
         checkArgument(occurrenceCountUnderParent > 0, "Occurrence count under parent should be "
-                + "greater than 0. It was: [" + occurrenceCountUnderParent + "].");
+            + "greater than 0. It was: [" + occurrenceCountUnderParent + "].");
         this.occurrenceCountUnderParent = occurrenceCountUnderParent;
     }
 

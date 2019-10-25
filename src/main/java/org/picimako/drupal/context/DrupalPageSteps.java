@@ -28,7 +28,12 @@ public class DrupalPageSteps {
     }
 
     @When("I add {} component")
-    public void i_add_X_component(NodeType nodeType) {
+    public void i_add_X_component(ParagraphNodeType nodeType) {
         //Contains custom logic for adding a component based on the argument node type
+    }
+
+    @When("I add {} modifier")
+    public void i_add_X_modifier(ModifierNodeType nodeType) {
+        //Contains custom logic for adding a modifier based on the argument node type
     }
 }

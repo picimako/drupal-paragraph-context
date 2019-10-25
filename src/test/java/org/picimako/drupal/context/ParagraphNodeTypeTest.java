@@ -5,12 +5,12 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit test for {@link NodeType}.
+ * Unit test for {@link ParagraphNodeType}.
  */
-public class NodeTypeTest {
+public class ParagraphNodeTypeTest {
 
     @Test
     public void shouldConvertNodeTypeToContextSelector() {
-        assertThat(NodeType.LAYOUT.toContextSelector()).isEqualTo(ComponentContextSelector.LAYOUT);
+        assertThat(ParagraphNodeType.LAYOUT.toContextSelector()).isEqualTo(ComponentContextSelector.LAYOUT);
     }
 }

@@ -16,7 +16,7 @@ public class CssContextSelectorAssemblerTest {
 
     @Test
     public void shouldCreateSelectorFromOneNode() {
-        List<ComponentNode> nodes = List.of(new ComponentNode(1, NodeType.CONTAINER));
+        List<ComponentNode> nodes = List.of(new ComponentNode(1, ParagraphNodeType.CONTAINER));
         String expectedCssSelector = ".container:nth-child(1)";
 
         assertThat(assembler.createCssContextSelectorFrom(nodes)).isEqualTo(expectedCssSelector);
@@ -25,9 +25,9 @@ public class CssContextSelectorAssemblerTest {
     @Test
     public void shouldCreateSelectorFromMultipleNodes() {
         List<ComponentNode> nodes = List.of(
-                new ComponentNode(1, NodeType.CONTAINER),
-                new ComponentNode(2, NodeType.LAYOUT),
-                new ComponentNode(3, NodeType.IMAGE));
+                new ComponentNode(1, ParagraphNodeType.CONTAINER),
+                new ComponentNode(2, ParagraphNodeType.LAYOUT),
+                new ComponentNode(3, ParagraphNodeType.IMAGE));
         String expectedCssSelector = ".container:nth-child(1) .layout .image-component:nth-child(1)";
 
         assertThat(assembler.createCssContextSelectorFrom(nodes)).isEqualTo(expectedCssSelector);
@@ -35,12 +35,12 @@ public class CssContextSelectorAssemblerTest {
 
     @Test
     public void shouldCreateSelectorWithProperOccurrenceCount() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         container.setOccurrenceCountUnderParent(2);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
         image.setOccurrenceCountUnderParent(3);
 
-        List<ComponentNode> nodes = List.of(container, new ComponentNode(2, NodeType.LAYOUT), image);
+        List<ComponentNode> nodes = List.of(container, new ComponentNode(2, ParagraphNodeType.LAYOUT), image);
         String expectedCssSelector = ".container:nth-child(2) .layout .image-component:nth-child(3)";
 
         assertThat(assembler.createCssContextSelectorFrom(nodes)).isEqualTo(expectedCssSelector);

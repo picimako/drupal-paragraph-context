@@ -31,7 +31,7 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithoutParentIfThereWasNoPreviousNodeProcessed() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         tree.addNode(container, null);
 
         Iterable<ComponentNode> traversed = traverseTreeFrom(container);
@@ -40,9 +40,9 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithoutEdgeIfTheNodeIsAtRootLevel() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode container2 = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -57,8 +57,8 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithEdgeToPreviousNodeWhenThisNodeIsOneLevelDeeperThanThePreviousNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -70,8 +70,8 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldNotAddNodeWithEdgeToPreviousNodeWhenThisNodeIsMoreThanOneLevelDeeperThanThePreviousNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
 
         tree.addNode(container, null);
         assertThatIllegalArgumentException()
@@ -82,10 +82,10 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithEdgeToCommonParentOfPreviousNodeIfThisNodeIsOnAHigherLevelThanThePreviousNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode layout2 = new ComponentNode(2, NodeType.LAYOUT);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode layout2 = new ComponentNode(2, ParagraphNodeType.LAYOUT);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -107,10 +107,10 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithoutEdgeToCommonParentOfPreviousNodeIfTheCurrentNodeIsARootLevelOne() {
-        ComponentNode container1 = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode container2 = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container1 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
         tree.addNode(container1, null);
         tree.addNode(layout, container1);
@@ -128,10 +128,10 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldAddNodeWithEdgeToCommonParentOfPreviousNodeIfThisNodeIsASiblingOfThePreviousNode() {
-        ComponentNode container1 = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode youtubeVideo = new ComponentNode(3, NodeType.YOUTUBE_VIDEO);
+        ComponentNode container1 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
 
         tree.addNode(container1, null);
         tree.addNode(layout, container1);
@@ -150,10 +150,10 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldCalculateAndSetOccurrenceCountUnderParent() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode layout2 = new ComponentNode(2, NodeType.LAYOUT);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode layout2 = new ComponentNode(2, ParagraphNodeType.LAYOUT);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -168,16 +168,16 @@ public class ComponentTreeTest {
 
     @Test
     public void shouldThrowExceptionWhenTheChildIsMoreThanOneLevelDeeperThanItsImmediateParent() {
-        ComponentNode nodeHigher = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode nodeDeeper = new ComponentNode(4, NodeType.YOUTUBE_VIDEO);
+        ComponentNode nodeHigher = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode nodeDeeper = new ComponentNode(4, ParagraphNodeType.YOUTUBE_VIDEO);
 
         tree.addNode(nodeHigher, null);
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tree.addNode(nodeDeeper, nodeHigher))
                 .withMessage("Child defined more than 1 level deeper than its immediate parent is not considered a valid child node.\n"
-                        + "Parent was: [ComponentNode(level=2, type=LAYOUT, occurrenceCountUnderParent=1)]\n"
-                        + "Child was: [ComponentNode(level=4, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1)]");
+                        + "Parent was: [ComponentNode(level=2, type=LAYOUT, occurrenceCountUnderParent=1, isModifierNode=false)]\n"
+                        + "Child was: [ComponentNode(level=4, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1, isModifierNode=false)]");
     }
 
     private Iterable<ComponentNode> traverseTreeFrom(ComponentNode startNode) {

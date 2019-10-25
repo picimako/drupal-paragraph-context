@@ -17,8 +17,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.picimako.drupal.context.NodeType.CONTAINER;
-import static org.picimako.drupal.context.NodeType.YOUTUBE_VIDEO;
+import static org.picimako.drupal.context.ModifierNodeType.COLORS_MODIFIER;
+import static org.picimako.drupal.context.ParagraphNodeType.CONTAINER;
+import static org.picimako.drupal.context.ParagraphNodeType.LAYOUT;
+import static org.picimako.drupal.context.ParagraphNodeType.YOUTUBE_VIDEO;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
@@ -56,8 +58,8 @@ public class ComponentTreeBasedContentAssemblerTest {
     public void shouldThrowExceptionWhenThereIsNoComponentTreeToProcess() {
         String emptyString = "";
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> assembler.assembleContent(emptyString))
-                .withMessage("There is no component tree to process. It should not be blank.");
+            .isThrownBy(() -> assembler.assembleContent(emptyString))
+            .withMessage("There is no component tree to process. It should not be blank.");
     }
 
     @Test
@@ -79,36 +81,40 @@ public class ComponentTreeBasedContentAssemblerTest {
     @Test
     public void shouldAssembleMultiComponentNodeContent() {
         String componentTree = "- CONTAINER\n"
-                + "-- LAYOUT\n"
-                + "--- YOUTUBE_VIDEO";
+            + "-- LAYOUT\n"
+            + "--- YOUTUBE_VIDEO\n"
+            + "----@ COLORS_MODIFIER";
         ComponentNode container = mockComponent("- CONTAINER", 1, CONTAINER);
-        ComponentNode layout = mockComponent("-- LAYOUT", 2, NodeType.LAYOUT);
+        ComponentNode layout = mockComponent("-- LAYOUT", 2, LAYOUT);
         ComponentNode youtubeVideo = mockComponent("--- YOUTUBE_VIDEO", 3, YOUTUBE_VIDEO);
+        ComponentNode colorsModifier = mockComponent("----@ COLORS_MODIFIER", 4, COLORS_MODIFIER);
+        colorsModifier.setModifierNode(true);
 
         assembler.assembleContent(componentTree);
 
         verifyComponent("- CONTAINER", container, null);
         verifyComponent("-- LAYOUT", layout, container);
+        verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
 
-        verify(nodeCreator).createNode("--- YOUTUBE_VIDEO");
-        verify(tree).addNode(youtubeVideo, layout);
-        verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(youtubeVideo));
-        verify(componentAdder).addComponentToPage(youtubeVideo);
+        verify(nodeCreator).createNode("----@ COLORS_MODIFIER");
+        verify(tree).addNode(colorsModifier, youtubeVideo);
+        verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(colorsModifier));
+        verify(componentAdder).addComponentToPage(colorsModifier);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
-        assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo);
+        assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo, colorsModifier);
     }
 
     @Test
     public void shouldAssembleContentContainingConfigurationNodes() {
         String componentTree = "- CONTAINER\n"
-                + "-* bg-image:background.png\n"
-                + "-- LAYOUT\n"
-                + "--- YOUTUBE_VIDEO\n"
-                + "---* title:an_awesome_youtube_video";
+            + "-* bg-image:background.png\n"
+            + "-- LAYOUT\n"
+            + "--- YOUTUBE_VIDEO\n"
+            + "---* title:an_awesome_youtube_video";
         ComponentNode container = mockComponent("- CONTAINER", 1, CONTAINER);
         mockConfiguration("-* bg-image:background.png", Map.of("bg-image", "background.png"));
-        ComponentNode layout = mockComponent("-- LAYOUT", 2, NodeType.LAYOUT);
+        ComponentNode layout = mockComponent("-- LAYOUT", 2, LAYOUT);
         ComponentNode youtubeVideo = mockComponent("--- YOUTUBE_VIDEO", 3, YOUTUBE_VIDEO);
         mockConfiguration("---* title:an_awesome_youtube_video", Map.of("title", "an_awesome_youtube_video"));
 

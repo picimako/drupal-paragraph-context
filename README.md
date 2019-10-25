@@ -70,13 +70,12 @@ The underlying logic no more uses the context selector path (*CONTAINER > LAYOUT
 directly the CSS selector from the tree defined above when it is being traversed.
 
 The logic differentiates the following kind of nodes:
-- **Component node**: they represent Drupal Paragraph types, and are used for building the component context
+- **Component node**: they represent Drupal Paragraph and Modifier types, and are used for building the component context
                   (saved in a component tree), and also signals to the parser that it should add a new component
                   at that point.
 - **Configuration node**: they are basically a key-value mapping, so that Paragraphs can be configured based on them.
                       They are not saved in the component tree, they are used only to invoke configuration logic at certain
                       points.
-- **Modifier node**: **COMING SOON**
 
 Of course passing data from configuration nodes may need additional type conversion if they expect/use some of the parameter
 type converters, or even more, data table type converters.

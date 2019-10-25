@@ -5,7 +5,7 @@ import java.util.function.Function;
 /**
  * Provides component CSS selectors for building context for certain actions on the Drupal editor.
  * <p>
- * An individual component's context selector is a(n) (as unique as possible) CSS selector of that component
+ * An individual component's context selector is a(n) (as unique as possible) CSS selector of that component/modifier
  * parameterized with the occurrence count under its parent node, that is currently being worked with.
  * <p>
  * The default value of the index when is 1. See {@link ComponentNode}.
@@ -39,6 +39,7 @@ import java.util.function.Function;
  * @see ComponentTreeBranchToCssContextSelectorConverter
  */
 public enum ComponentContextSelector {
+    //Paragraphs
     CONTAINER(i -> ".container:nth-child(" + i + ")"),
     /**
      * Note that the index is not used in this case. It may happen that a Container can contain only one Layout.
@@ -47,7 +48,11 @@ public enum ComponentContextSelector {
     IMAGE(i -> ".image-component:nth-child(" + i + ")"),
     CAROUSEL(i -> ".carousel:nth-child(" + i + ")"),
     CAROUSEL_ITEM(i -> ".carousel-item:nth-child(" + i + ")"),
-    YOUTUBE_VIDEO(i -> ".youtube-video:nth-child(" + i + ")");
+    YOUTUBE_VIDEO(i -> ".youtube-video:nth-child(" + i + ")"),
+
+    //Modifiers
+    ABSOLUTE_HEIGHT_MODIFIER(i -> ".height-modifier:nth-child(" + i + ")"),
+    COLORS_MODIFIER(i -> ".colors-modifier:nth-child(" + i + ")");
 
     private final Function<Long, String> selector;
 

@@ -30,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  *                                                  The level marker is only for consistency with the rest of the tree.
  * ---- VIDEO
  * ----* url:https://some.other/url, initialTime:10
+ * -----@ ABSOLUTE_HEIGHT_MODIFIER    <- This is a Modifier Component node for the last VIDEO component.
  * </pre>
  */
 public class ComponentTreeBasedContentAssembler {

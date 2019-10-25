@@ -29,9 +29,16 @@ public class NodeCreatorTest {
     }
 
     @Test
-    public void shouldConvertStringToComponentNode() {
-        Node node = new ComponentNode(3, NodeType.LAYOUT);
+    public void shouldConvertParagraphStringToComponentNode() {
+        Node node = new ComponentNode(3, ParagraphNodeType.LAYOUT);
         assertThat(nodeCreator.createNode("--- LAYOUT")).isEqualToComparingFieldByField(node);
+    }
+
+    @Test
+    public void shouldConvertModifierStringToComponentNode() {
+        ComponentNode node = new ComponentNode(3, ModifierNodeType.COLORS_MODIFIER);
+        node.setModifierNode(true);
+        assertThat(nodeCreator.createNode("---@ COLORS_MODIFIER")).isEqualToComparingFieldByField(node);
     }
 
     @Test
@@ -82,7 +89,12 @@ public class NodeCreatorTest {
     }
 
     @Test
-    public void shouldNotBeConfigurationNode() {
+    public void shouldNotConvertParagraphToConfigurationNode() {
         assertThat(NodeCreator.isConfigurationNode("-- CONTAINER")).isFalse();
+    }
+
+    @Test
+    public void shouldNotConvertModifierToConfigurationNode() {
+        assertThat(NodeCreator.isConfigurationNode("--@ COLORS_MODIFIER")).isFalse();
     }
 }

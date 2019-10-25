@@ -21,8 +21,8 @@ public class ComponentConfigurer {
 
     static {
         Map<NodeType, BiConsumer<ConfigurationNode, ComponentConfigurer>> configurer = new HashMap<>();
-        configurer.put(NodeType.CONTAINER, (node, conf) -> conf.configureLayout(node));
-        configurer.put(NodeType.YOUTUBE_VIDEO, (node, conf) -> conf.configureYoutubeVideo(node));
+        configurer.put(ParagraphNodeType.CONTAINER, (node, conf) -> conf.configureLayout(node));
+        configurer.put(ParagraphNodeType.YOUTUBE_VIDEO, (node, conf) -> conf.configureYoutubeVideo(node));
         NODE_TYPE_TO_CONFIGURER = Map.copyOf(configurer);
     }
 

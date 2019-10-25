@@ -22,9 +22,9 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnPredecessorsFromBranchOfANode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -38,10 +38,10 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnPredecessorsFromBranchOfANodeWhenNodeIsSiblingOfThePreviousNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode youtubeVideo = new ComponentNode(3, NodeType.YOUTUBE_VIDEO);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -56,9 +56,9 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnAnEmptyListIfTheCurrentNodeIsAtRootLevelAndHasNoPredecessors() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode container2 = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -73,9 +73,9 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnAllNodesFromBranchOfALeafNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -89,10 +89,10 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnAllNodesFromBranchOfANodeWhenNodeIsSiblingOfThePreviousNode() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode image = new ComponentNode(3, NodeType.IMAGE);
-        ComponentNode youtubeVideo = new ComponentNode(3, NodeType.YOUTUBE_VIDEO);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
@@ -107,9 +107,9 @@ public class ComponentTreeBranchTraverserTest {
 
     @Test
     public void shouldReturnAnSingletonListIfTheCurrentNodeIsHasNoPredecessors() {
-        ComponentNode container = new ComponentNode(1, NodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, NodeType.LAYOUT);
-        ComponentNode container2 = new ComponentNode(1, NodeType.CONTAINER);
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
         tree.addNode(container, null);
         tree.addNode(layout, container);
