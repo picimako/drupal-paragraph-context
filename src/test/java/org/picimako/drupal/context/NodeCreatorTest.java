@@ -53,6 +53,17 @@ public class NodeCreatorTest {
     }
 
     @Test
+    public void shouldConvertQuotedStringToConfigurationNode() {
+        ReflectionTestUtils.setField(nodeCreator, "parser", parser, ConfigurationNodeConfigParser.class);
+        when(parser.parseConfigurationValues("url:\" someUrl \", color:\" blue \""))
+            .thenReturn(Map.of("url", " someUrl ", "color", " blue "));
+
+        ConfigurationNode node = (ConfigurationNode) nodeCreator.createNode("---* url:\" someUrl \", color:\" blue \"");
+        assertThat(node.get("url")).isEqualTo(" someUrl ");
+        assertThat(node.get("color")).isEqualTo(" blue ");
+    }
+
+    @Test
     public void shouldThrowExceptionWhenConfigurationConsistsOnlyOfAKeyOrAValue() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> nodeCreator.createNode("--- asdsa"))

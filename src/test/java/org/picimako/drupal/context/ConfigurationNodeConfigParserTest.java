@@ -29,6 +29,8 @@ public class ConfigurationNodeConfigParserTest {
         assertThatIllegalArgumentException().isThrownBy(() -> parser.parseConfigurationValues("   "));
     }
 
+    // Unquoted
+
     @Test
     public void shouldParseConfigurationValues() {
         String configuration = "url:https://duckduckgo.com?param=value, image:someimage";
@@ -46,7 +48,7 @@ public class ConfigurationNodeConfigParserTest {
     }
 
     @Test
-    public void shouldNotTrimEntryValues() {
+    public void shouldNotTrimUnquotedEntryValues() {
         String configuration = "url: https://duckduckgo.com?param=value, image: someimage";
         Map<String, String> expectedConfiguration = Map.of("url", " https://duckduckgo.com?param=value", "image", " someimage");
 
@@ -54,7 +56,7 @@ public class ConfigurationNodeConfigParserTest {
     }
 
     @Test
-    public void shouldNotTrimEntryValuesAtTheirEnds() {
+    public void shouldNotTrimUnquotedEntryValuesAtTheirEnds() {
         String configuration = "url:https://duckduckgo.com?param=value   , image:someimage   ";
         Map<String, String> expectedConfiguration = Map.of("url", "https://duckduckgo.com?param=value   ", "image", "someimage   ");
 
@@ -64,7 +66,33 @@ public class ConfigurationNodeConfigParserTest {
     @Test
     public void shouldThrowExceptionWhenAKeyValuePairDoesNotContainAKeyValueDelimiter() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> parser.parseConfigurationValues("url: something, color"))
-                .withMessage("There is at least one configuration entry that doesn't have a key or a value part.");
+            .isThrownBy(() -> parser.parseConfigurationValues("url: something, color"))
+            .withMessage("There is at least one configuration entry that doesn't have a key or a value part.");
+    }
+
+    // Quoted
+
+    @Test
+    public void shouldParseQuotedConfigurationValues() {
+        String configuration = "url:\" https://duckduckgo.com?param=value \", image:someimage";
+        Map<String, String> expectedConfiguration = Map.of("url", " https://duckduckgo.com?param=value ", "image", "someimage");
+
+        assertThat(parser.parseConfigurationValues(configuration)).containsAllEntriesOf(expectedConfiguration);
+    }
+
+    @Test
+    public void shouldParseQuotedConfigurationContainingEscapedCommas() {
+        String configuration = "path:/some/path, text:\"Overconfidence\\, this\\, and a small screwdriver.\"";
+        Map<String, String> expectedConfiguration = Map.of("path", "/some/path", "text", "Overconfidence, this, and a small screwdriver.");
+
+        assertThat(parser.parseConfigurationValues(configuration)).containsAllEntriesOf(expectedConfiguration);
+    }
+
+    @Test
+    public void shouldParseQuotedConfigurationContainingEscapedDoubleQuote() {
+        String configuration = "url: https://duckduckgo.com?param=value, image:\" some\"image\"";
+        Map<String, String> expectedConfiguration = Map.of("url", " https://duckduckgo.com?param=value", "image", " some\"image");
+
+        assertThat(parser.parseConfigurationValues(configuration)).containsAllEntriesOf(expectedConfiguration);
     }
 }

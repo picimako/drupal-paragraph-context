@@ -36,7 +36,8 @@ public class NodeCreator {
     /**
      * Converts the argument String values to different {@link Node} objects based on their defined patterns.
      * <p>
-     * TODO: add option to enclose configuration value in " and " so that ending whitespaces are displayed properly
+     * Configuration values (at the right hand side of the colon symbol) may be enclosed by {@code "} characters,
+     * so that extra characters like whitespaces at the beginning and at the end of the value are more prominent.
      *
      * @param line the line (component or configuration) to convert
      * @return the created node

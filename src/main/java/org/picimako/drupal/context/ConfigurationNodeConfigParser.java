@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
@@ -17,6 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class ConfigurationNodeConfigParser {
 
+    private static final Pattern QUOTED_VALUE_PATTERN = Pattern.compile("^\"(?<value>.*)\"$");
     private final Splitter keyValuePairSplitter = Splitter.onPattern("(?<!\\\\),");
     private final Splitter keyValueSplitter = Splitter.on(":").limit(2);
 
@@ -25,7 +28,9 @@ public class ConfigurationNodeConfigParser {
      * <p>
      * Leading and trailing whitespaces are trimmed, so it makes the pattern of the configuration values more relaxed.
      * <p>
-     * The passed in value is expected in the following format: {@code key:value, otherkey:othervalue}.
+     * The passed in value is expected in the following format: {@code key:value, otherkey:othervalue} or in certain
+     * cases the values might need to be enclosed by quotation marks like {@code key:"value", otherkey:"othervalue"},
+     * that is also possible.
      *
      * @param configuration the configuration key-value pairs
      * @return the configuration values collected into a map
@@ -98,6 +103,19 @@ public class ConfigurationNodeConfigParser {
             .map(kvp -> StringUtils.stripStart(kvp, null))
             .collect(toMap(
                 kv -> keyValueSplitter.splitToList(kv).get(0),
-                kv -> keyValueSplitter.splitToList(kv).get(1)));
+                this::parseValue));
+    }
+
+    /**
+     * Retrieves the value from the argument key-value pair. If the value is also enclosed in quotation marks,
+     * it gets the value from between them.
+     *
+     * @param kv a configuration key-value pair
+     * @return the actual configuration value
+     */
+    private String parseValue(String kv) {
+        String value = keyValueSplitter.splitToList(kv).get(1);
+        Matcher quotedValueMatcher = QUOTED_VALUE_PATTERN.matcher(value);
+        return quotedValueMatcher.matches() ? quotedValueMatcher.group("value") : value;
     }
 }

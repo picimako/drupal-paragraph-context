@@ -85,12 +85,20 @@ type converters, or even more, data table type converters.
 The followings are configuration node values listing which ones are valid and which ones are invalid:
 
 #### Valid values
+**Unquoted**
 - ---* url:
-- (see the whitespace after the comma)---* url: 
+- (see the whitespace at the end)---* url:  
 - ---* url: something
 - ---* url: something, color:
-- (see the whitespace after the comma)---* url: something, color:  
+- (see the whitespace at the end)---* url: something, color:   
 - ---* url: something, color: rgba(0\\,0\\,0\\,0)
+
+**Quoted**
+- ---* url:" "
+- ---* url:" something"
+- ---* url:" something", color:
+- ---* url:" something", color:" "
+- ---* url:" something", color:" rgba(0\\,0\\,0\\,0)"
 
 #### Invalid values
 

@@ -31,12 +31,18 @@ public class NodeCreatorValidNodeKindTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"---* url:"},
-                {"---* url:"},
-                {"---* url: something"},
-                {"---* url: something, color:"},
-                {"---* url: something, color:"},
-                {"---* url: something, color: rgba(0\\,0\\,0\\,0)"},
+            {"---* url:"},
+            {"---* url: "},
+            {"---* url: something"},
+            {"---* url: something, color:"},
+            {"---* url: something, color: "},
+            {"---* url: something, color: rgba(0\\,0\\,0\\,0)"},
+
+            {"---* url:\" \""},
+            {"---* url:\" something\""},
+            {"---* url:\" something\", color:"},
+            {"---* url:\" something\", color:\" \""},
+            {"---* url:\" something\", color:\" rgba(0\\,0\\,0\\,0)\""},
         });
     }
 
