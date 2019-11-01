@@ -5,6 +5,8 @@ import com.google.common.graph.MutableGraph;
 
 import java.util.Optional;
 
+import static org.picimako.drupal.context.ComponentNode.ABSENT;
+
 /**
  * An abstract representation of a component tree defined in Gherkin steps from which, after traversal,
  * component context selector can be built.
@@ -37,8 +39,8 @@ public class ComponentTree {
      * Adds {@code currentNode} to the component tree, then based on what the {@code previousNode} was, creates an edge
      * (or not) between them:
      * <ol>
-     *     <li>If the previous node is {@code null}, it means that the current node is the first root element, thus edge
-     *     creation is not needed, only the addition of the current node to the graph.</li>
+     *     <li>If the previous node is {@link ComponentNode#ABSENT}, it means that the current node is the first root element,
+     *     thus edge creation is not needed, only the addition of the current node to the graph.</li>
      *     <li>If the current node is at the root level, then no edge is created since it has no parent node,
      *     but the occurrence of it at the root level still gets calculated.</li>
      *     <li>If the current node is one level deeper than the previous node, then it is an immediate child of it,
@@ -50,20 +52,6 @@ public class ComponentTree {
      *     In that case it simply won't find a suitable parent.</li>
      *     <li>If the current and previous nodes are at the same level, then they are siblings, thus an edge can be
      *     created between the current node and the immediate parent of the previous node.</li>
-     *     <li>If the current node is more than one level deeper than the previous node, it throws an exception because
-     *     we don't allow specifying components more than one level deeper under a given node.
-     *     This is allowed:
-     *     <pre>
-     *     - CONTAINER
-     *     -- LAYOUT
-     *     --- IMAGE
-     *     </pre>
-     *     while this is not valid:
-     *     <pre>
-     *     - CONTAINER
-     *     -- LAYOUT
-     *     ----- IMAGE
-     *     </pre></li>
      * </ol>
      *
      * @param currentNode  the node to process. At this point it is without any edge to other nodes.
@@ -71,7 +59,7 @@ public class ComponentTree {
      */
     public void addNode(ComponentNode currentNode, ComponentNode previousNode) {
         graph.addNode(currentNode);
-        if (previousNode != null) { //1.
+        if (previousNode != ABSENT) { //1.
             if (currentNode.isAtRootLevel()) { //2.
                 //Takes into account that if the current node is at root level, then no edge should be created.
                 calculateRootLevelOccurrenceCount(currentNode);
@@ -83,11 +71,6 @@ public class ComponentTree {
             } else if (currentNode.isAtSameLevelAs(previousNode)) { //5.
                 createEdgeWithCommonParent(previousNode, currentNode)
                         .ifPresent(parent -> calculateOccurrenceCountUnderParent(currentNode, parent));
-            } else { //6.
-                throw new IllegalArgumentException("Child defined more than 1 level deeper than its immediate parent"
-                        + " is not considered a valid child node.\n"
-                        + "Parent was: [" + previousNode + "]\n"
-                        + "Child was: [" + currentNode + "]");
             }
         }
     }

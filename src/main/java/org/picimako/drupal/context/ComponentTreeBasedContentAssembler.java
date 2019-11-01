@@ -1,8 +1,5 @@
 package org.picimako.drupal.context;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -37,6 +34,7 @@ public class ComponentTreeBasedContentAssembler {
 
     private final ComponentTree tree = new ComponentTree();
     private final NodeCreator nodeCreator = new NodeCreator();
+    private final ComponentTreeValidator componentTreeValidator = new ComponentTreeValidator();
     private final ComponentConfigurer componentConfigurer = new ComponentConfigurer();
     private final ComponentAdder componentAdder;
     private final ComponentContextSetter contextSetter;
@@ -92,6 +90,7 @@ public class ComponentTreeBasedContentAssembler {
      */
     public void assembleContent(String componentTree) {
         checkArgument(!isBlank(componentTree), "There is no component tree to process. It should not be blank.");
+        componentTreeValidator.validateTree(componentTree);
 
         AssemblerContext assemblerCtx = new AssemblerContext(componentTree.split("\n"));
         for (int i = 0; i < assemblerCtx.nodeCount(); i++) {
@@ -126,34 +125,5 @@ public class ComponentTreeBasedContentAssembler {
 
     public ComponentTree getTree() {
         return tree;
-    }
-
-    /**
-     * Context object for storing information that is required during the content assembly,
-     * and provides some convenience methods as well.
-     */
-    @Getter
-    @Setter
-    private static final class AssemblerContext {
-        private final String[] nodes;
-        private Node node;
-        private int index;
-        private ComponentNode previousComponentNode;
-
-        AssemblerContext(String[] nodes) {
-            this.nodes = nodes;
-        }
-
-        String getStringNode(int index) {
-            return nodes[index];
-        }
-
-        int nodeCount() {
-            return nodes.length;
-        }
-
-        boolean hasNextNode() {
-            return index != nodes.length - 1;
-        }
     }
 }

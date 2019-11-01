@@ -26,7 +26,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(image, layout);
 
@@ -43,7 +43,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
         ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(image, layout);
         tree.addNode(youtubeVideo, image);
@@ -60,7 +60,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(container2, layout);
 
@@ -77,7 +77,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(image, layout);
 
@@ -94,7 +94,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
         ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(image, layout);
         tree.addNode(youtubeVideo, image);
@@ -111,7 +111,7 @@ public class ComponentTreeBranchTraverserTest {
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode container2 = new ComponentNode(1, ParagraphNodeType.CONTAINER);
 
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(container2, layout);
 

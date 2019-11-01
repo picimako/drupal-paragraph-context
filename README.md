@@ -80,6 +80,8 @@ The logic differentiates the following kind of nodes:
 Of course passing data from configuration nodes may need additional type conversion if they expect/use some of the parameter
 type converters, or even more, data table type converters.
 
+And to be able to do something with this whole library, the entry point is `ComponentTreeBasedContentAssembler.assembleContent(String)`.
+
 ## Configuration node format
 
 The followings are configuration node values listing which ones are valid and which ones are invalid:

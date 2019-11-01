@@ -29,7 +29,7 @@ public class ComponentTreeBranchToCssContextSelectorConverterTest {
     public void shouldConvertCurrentNodeIntoSingletonListIfItIsAtRootLevel() {
         ComponentTree tree = new ComponentTree();
         ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
 
         when(assembler.createCssContextSelectorFrom(argThat(list -> list.size() == 1))).thenReturn(".container");
         setField(converter, "selectorAssembler", assembler, CssContextSelectorAssembler.class);
@@ -43,7 +43,7 @@ public class ComponentTreeBranchToCssContextSelectorConverterTest {
         ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
-        tree.addNode(container, null);
+        tree.addNode(container, ComponentNode.ABSENT);
         tree.addNode(layout, container);
         tree.addNode(image, layout);
 

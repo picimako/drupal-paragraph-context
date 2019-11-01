@@ -70,7 +70,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         assembler.assembleContent(componentTree);
 
         verify(nodeCreator).createNode("- CONTAINER");
-        verify(tree).addNode(container, null);
+        verify(tree).addNode(container, ComponentNode.ABSENT);
         verify(contextSetter, never()).setContext(any(), any());
         verify(componentAdder).addComponentToPage(container);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
@@ -83,20 +83,20 @@ public class ComponentTreeBasedContentAssemblerTest {
         String componentTree = "- CONTAINER\n"
             + "-- LAYOUT\n"
             + "--- YOUTUBE_VIDEO\n"
-            + "----@ COLORS_MODIFIER";
+            + "---@ COLORS_MODIFIER";
         ComponentNode container = mockComponent("- CONTAINER", 1, CONTAINER);
         ComponentNode layout = mockComponent("-- LAYOUT", 2, LAYOUT);
         ComponentNode youtubeVideo = mockComponent("--- YOUTUBE_VIDEO", 3, YOUTUBE_VIDEO);
-        ComponentNode colorsModifier = mockComponent("----@ COLORS_MODIFIER", 4, COLORS_MODIFIER);
+        ComponentNode colorsModifier = mockComponent("---@ COLORS_MODIFIER", 3, COLORS_MODIFIER);
         colorsModifier.setModifierNode(true);
 
         assembler.assembleContent(componentTree);
 
-        verifyComponent("- CONTAINER", container, null);
+        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT);
         verifyComponent("-- LAYOUT", layout, container);
         verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
 
-        verify(nodeCreator).createNode("----@ COLORS_MODIFIER");
+        verify(nodeCreator).createNode("---@ COLORS_MODIFIER");
         verify(tree).addNode(colorsModifier, youtubeVideo);
         verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(colorsModifier));
         verify(componentAdder).addComponentToPage(colorsModifier);
@@ -120,7 +120,7 @@ public class ComponentTreeBasedContentAssemblerTest {
 
         assembler.assembleContent(componentTree);
 
-        verifyComponent("- CONTAINER", container, null);
+        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT);
         verifyConfiguration("-* bg-image:background.png", CONTAINER, "bg-image", "background.png");
         verifyComponent("-- LAYOUT", layout, container);
         verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);

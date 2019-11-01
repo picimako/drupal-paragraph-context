@@ -20,11 +20,18 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @ToString
 public class ComponentNode implements Node {
+    public static final ComponentNode ABSENT = new ComponentNode();
+
     private final int level;
     private final NodeType type;
     private long occurrenceCountUnderParent = 1;
     @Setter
     private boolean isModifierNode;
+
+    private ComponentNode() {
+        this.level = 0;
+        this.type = null;
+    }
 
     /**
      * Creates a new {@link ComponentNode}.
@@ -53,15 +60,26 @@ public class ComponentNode implements Node {
 
     /**
      * Checks whether the current node is one level deeper in the tree than the argument node.
+     *
+     * @param node the node to inspect
+     * @return true if the current node is one level deeper than the argument node, otherwise false
+     * @see ComponentNode#isDeeperThan(ComponentNode)
+     */
+    public boolean isOneLevelDeeperThan(ComponentNode node) {
+        return level - node.getLevel() == 1;
+    }
+
+    /**
+     * Checks whether the current node is deeper in the tree than the argument node.
      * <p>
      * A node is on a deeper level than an other one when its level number has a greater value. A deeper level means
      * a child relationship to higher ones.
      *
      * @param node the node to inspect
-     * @return true if the current node is one level deeper than the argument node, otherwise false
+     * @return true if the current node is deeper than the argument node, otherwise false
      */
-    public boolean isOneLevelDeeperThan(ComponentNode node) {
-        return level - node.getLevel() == 1;
+    public boolean isDeeperThan(ComponentNode node) {
+        return level > node.getLevel();
     }
 
     /**
