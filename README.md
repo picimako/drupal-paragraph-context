@@ -5,8 +5,6 @@
 This project is rather a case study, and I can image using it only in specific cases but the idea behind it might be
 more important and more reusable than this implementation of it.
 
-If you want to use any part of this library, feel free to do so, there is no licencing involved.
-
 ## Background and how this works
 
 This idea came up during and a similar solution was originally made for a Drupal/PHP based project
