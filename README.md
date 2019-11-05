@@ -110,3 +110,8 @@ The followings are configuration node values listing which ones are valid and wh
 - ---* url: something,
 - (see the whitespace after the comma)---* url: something, 
 - ---* url: something, color
+
+## Additional notes
+
+It is worth keeping in mind that depending on the structure of your project some classes may need to be moved to
+different scope (test/compile), different packages or even modules to make them available properly.
