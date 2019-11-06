@@ -26,4 +26,8 @@ public class ConfigurationNode implements Node {
     public String get(String key) {
         return configurations.get(key);
     }
+
+    public boolean hasProperty(String property) {
+        return configurations.containsKey(property);
+    }
 }

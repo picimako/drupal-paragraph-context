@@ -35,7 +35,7 @@ public class ComponentTreeBasedContentAssembler {
     private final ComponentTree tree = new ComponentTree();
     private final NodeCreator nodeCreator = new NodeCreator();
     private final ComponentTreeValidator componentTreeValidator = new ComponentTreeValidator();
-    private final ComponentConfigurer componentConfigurer = new ComponentConfigurer();
+    private final ComponentConfigurer componentConfigurer;
     private final ComponentAdder componentAdder;
     private final ComponentContextSetter contextSetter;
 
@@ -50,10 +50,11 @@ public class ComponentTreeBasedContentAssembler {
      *
      * @param steps a step definitions class for handling component addition and context setting
      */
-    public ComponentTreeBasedContentAssembler(DrupalPageSteps steps) {
+    public ComponentTreeBasedContentAssembler(DrupalPageSteps steps, DrupalConfigurationSteps configSteps) {
         requireNonNull(steps);
         this.componentAdder = new ComponentAdder(steps);
         this.contextSetter = new ComponentContextSetter(steps);
+        this.componentConfigurer = new ComponentConfigurer(configSteps);
     }
 
     /**
@@ -100,10 +101,8 @@ public class ComponentTreeBasedContentAssembler {
             if (node instanceof ComponentNode) {
                 ComponentNode currentNode = (ComponentNode) node;
                 tree.addNode(currentNode, assemblerCtx.getPreviousComponentNode());
-
-                //TODO: setting component context and adding the component's order may need to be reversed
+                componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
                 setComponentContext(currentNode, assemblerCtx);
-                componentAdder.addComponentToPage(currentNode);
                 assemblerCtx.setPreviousComponentNode(currentNode);
             } else {
                 componentConfigurer.configure(assemblerCtx.getPreviousComponentNode().getType(), (ConfigurationNode) node);
@@ -115,15 +114,11 @@ public class ComponentTreeBasedContentAssembler {
      * Component context setting should happen when there is still at least one other unprocessed
      * node in the tree besides {@code currentNode}, which can either be a configuration node
      * or a component node that is one level deeper than this node (TODO: no validation yet),
-     * or later a Modifier node.
+     * or a Modifier node.
      */
     private void setComponentContext(ComponentNode currentNode, AssemblerContext context) {
         if (context.hasNextNode()) {
             contextSetter.setContext(tree, currentNode);
         }
-    }
-
-    public ComponentTree getTree() {
-        return tree;
     }
 }

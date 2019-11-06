@@ -3,6 +3,7 @@ package io.picimako.drupal.context;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 import static io.picimako.drupal.context.ComponentNode.ABSENT;
@@ -67,36 +68,50 @@ public class ComponentTree {
                 graph.putEdge(previousNode, currentNode);
             } else if (currentNode.isHigherThan(previousNode)) { //4.
                 createEdgeWithCommonParent(previousNode, currentNode)
-                        .ifPresent(parent -> calculateOccurrenceCountUnderParent(currentNode, parent));
+                    .ifPresent(parent -> calculateOccurrenceCountUnderParent(currentNode, parent));
             } else if (currentNode.isAtSameLevelAs(previousNode)) { //5.
                 createEdgeWithCommonParent(previousNode, currentNode)
-                        .ifPresent(parent -> calculateOccurrenceCountUnderParent(currentNode, parent));
+                    .ifPresent(parent -> calculateOccurrenceCountUnderParent(currentNode, parent));
             }
         }
     }
 
+    /**
+     * Returns the immediate parent node of the argument node, or if it doesn't have a parent
+     * then it returns {@link ComponentNode#ABSENT}.
+     *
+     * @param node the node to get the parent of
+     * @return the parent node or {@link ComponentNode#ABSENT}
+     */
+    public ComponentNode getParentNode(ComponentNode node) {
+        //TODO: in case of modifiers the parent is not the component one level above but the last paragraph component
+        //TODO: with the same level under its immediate parent
+        Iterator<ComponentNode> iterator = graph.predecessors(node).iterator();
+        return iterator.hasNext() ? iterator.next() : ABSENT;
+    }
+
     private Optional<ComponentNode> createEdgeWithCommonParent(ComponentNode previousNode, ComponentNode currentNode) {
         Optional<ComponentNode> parent = branchTraverser.getPredecessorsFromBranchOf(previousNode)
-                .stream()
-                .filter(currentNode::isOneLevelDeeperThan)
-                .findFirst();
+            .stream()
+            .filter(currentNode::isOneLevelDeeperThan)
+            .findFirst();
         parent.ifPresent(parentNode -> graph.putEdge(parentNode, currentNode));
         return parent;
     }
 
     private void calculateRootLevelOccurrenceCount(ComponentNode currentNode) {
         long occurrenceCount = graph.nodes().stream()
-                .filter(ComponentNode::isAtRootLevel)
-                .filter(node -> node.hasSameTypeAs(currentNode))
-                .count();
+            .filter(ComponentNode::isAtRootLevel)
+            .filter(node -> node.hasSameTypeAs(currentNode))
+            .count();
         currentNode.setOccurrenceCountUnderParent(occurrenceCount);
     }
 
     private void calculateOccurrenceCountUnderParent(ComponentNode currentNode, ComponentNode parent) {
         long occurrenceCount = graph.successors(parent)
-                .stream()
-                .filter(node -> node.hasSameTypeAs(currentNode))
-                .count();
+            .stream()
+            .filter(node -> node.hasSameTypeAs(currentNode))
+            .count();
         currentNode.setOccurrenceCountUnderParent(occurrenceCount);
     }
 }

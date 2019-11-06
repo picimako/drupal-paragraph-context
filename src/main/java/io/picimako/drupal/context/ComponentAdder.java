@@ -13,19 +13,19 @@ import java.util.function.Consumer;
  */
 public class ComponentAdder {
 
-    private static final Map<ParagraphNodeType, Consumer<DrupalPageSteps>> COMPONENT_ADDERS = new HashMap<>();
-    private static final Map<ModifierNodeType, Consumer<DrupalPageSteps>> MODIFIER_ADDERS = new HashMap<>();
+    private static final Map<ParagraphNodeType, ComponentInserter> COMPONENT_ADDERS = new HashMap<>();
+    private static final Map<ModifierNodeType, ComponentInserter> MODIFIER_ADDERS = new HashMap<>();
     private final DrupalPageSteps drupalPageSteps;
 
     static {
-        COMPONENT_ADDERS.put(ParagraphNodeType.CONTAINER, DrupalPageSteps::i_add_a_container);
-        COMPONENT_ADDERS.put(ParagraphNodeType.LAYOUT, DrupalPageSteps::i_add_a_layout);
-        COMPONENT_ADDERS.put(ParagraphNodeType.IMAGE, steps -> steps.i_add_X_component(ParagraphNodeType.IMAGE));
-        COMPONENT_ADDERS.put(ParagraphNodeType.YOUTUBE_VIDEO, steps -> steps.i_add_X_component(ParagraphNodeType.YOUTUBE_VIDEO));
+        COMPONENT_ADDERS.put(ParagraphNodeType.CONTAINER, (parent, node, steps) -> steps.i_add_a_container());
+        COMPONENT_ADDERS.put(ParagraphNodeType.LAYOUT, (parent, node, steps) -> steps.i_add_a_layout());
+        COMPONENT_ADDERS.put(ParagraphNodeType.IMAGE, (parent, node, steps) -> steps.i_add_X_component(ParagraphNodeType.IMAGE));
+        COMPONENT_ADDERS.put(ParagraphNodeType.YOUTUBE_VIDEO, (parent, node, steps) -> steps.i_add_X_component(ParagraphNodeType.YOUTUBE_VIDEO));
 
         MODIFIER_ADDERS.put(ModifierNodeType.ABSOLUTE_HEIGHT_MODIFIER,
-            steps -> steps.i_add_X_modifier(ModifierNodeType.ABSOLUTE_HEIGHT_MODIFIER));
-        MODIFIER_ADDERS.put(ModifierNodeType.COLORS_MODIFIER, steps -> steps.i_add_X_modifier(ModifierNodeType.COLORS_MODIFIER));
+            (parent, node, steps) -> steps.i_add_X_modifier(ModifierNodeType.ABSOLUTE_HEIGHT_MODIFIER));
+        MODIFIER_ADDERS.put(ModifierNodeType.COLORS_MODIFIER, (parent, node, steps) -> steps.i_add_X_modifier(ModifierNodeType.COLORS_MODIFIER));
     }
 
     public ComponentAdder(DrupalPageSteps steps) {
@@ -37,11 +37,16 @@ public class ComponentAdder {
      *
      * @param node the component type to add
      */
-    public void addComponentToPage(ComponentNode node) {
+    public void addComponentToPage(ComponentNode parentNode, ComponentNode node) {
         if (node.isModifierNode()) {
-            MODIFIER_ADDERS.get(node.getType()).accept(drupalPageSteps);
+            MODIFIER_ADDERS.get(node.getType()).insert(parentNode, node, drupalPageSteps);
         } else {
-            COMPONENT_ADDERS.get(node.getType()).accept(drupalPageSteps);
+            COMPONENT_ADDERS.get(node.getType()).insert(parentNode, node, drupalPageSteps);
         }
+    }
+
+    @FunctionalInterface
+    private interface ComponentInserter {
+        void insert(ComponentNode parentNode, ComponentNode node, DrupalPageSteps steps);
     }
 }

@@ -34,6 +34,8 @@ public class ComponentTreeBasedContentAssemblerTest {
     private ComponentContextSetter contextSetter;
     @Mock
     private DrupalPageSteps drupalPageSteps;
+    @Mock
+    private DrupalConfigurationSteps configurationSteps;
     @Spy
     private ComponentTree tree;
 
@@ -42,7 +44,7 @@ public class ComponentTreeBasedContentAssemblerTest {
     @Before
     public void setup() {
         initMocks(this);
-        assembler = new ComponentTreeBasedContentAssembler(drupalPageSteps);
+        assembler = new ComponentTreeBasedContentAssembler(drupalPageSteps, configurationSteps);
         setField(assembler, "nodeCreator", nodeCreator, NodeCreator.class);
         setField(assembler, "componentAdder", componentAdder, ComponentAdder.class);
         setField(assembler, "componentConfigurer", componentConfigurer, ComponentConfigurer.class);
@@ -68,7 +70,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         verify(nodeCreator).createNode("- CONTAINER");
         verify(tree).addNode(container, ComponentNode.ABSENT);
         verify(contextSetter, never()).setContext(any(), any());
-        verify(componentAdder).addComponentToPage(container);
+        verify(componentAdder).addComponentToPage(ComponentNode.ABSENT, container);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
         assertThat(tree.getGraph().nodes()).containsExactly(container);
@@ -95,7 +97,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         verify(nodeCreator).createNode("---@ COLORS_MODIFIER");
         verify(tree).addNode(colorsModifier, youtubeVideo);
         verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(colorsModifier));
-        verify(componentAdder).addComponentToPage(colorsModifier);
+        verify(componentAdder).addComponentToPage(youtubeVideo, colorsModifier);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
         assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo, colorsModifier);
@@ -141,7 +143,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         verify(nodeCreator).createNode(nodeString);
         verify(tree).addNode(currentNode, previousNode);
         verify(contextSetter).setContext(any(ComponentTree.class), eq(currentNode));
-        verify(componentAdder).addComponentToPage(currentNode);
+        verify(componentAdder).addComponentToPage(previousNode, currentNode);
     }
 
     private void verifyConfiguration(String nodeString, NodeType nodeType, String key, String value) {
