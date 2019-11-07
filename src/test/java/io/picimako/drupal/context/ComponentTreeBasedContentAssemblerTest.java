@@ -1,5 +1,7 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
+import io.picimako.drupal.context.steps.DrupalPageSteps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

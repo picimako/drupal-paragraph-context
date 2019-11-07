@@ -1,5 +1,7 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +14,8 @@ public final class ImageComponentConfigurer {
 
     static {
         IMAGE_COMPONENT_CONFIGURER = new HashMap<>();
-        IMAGE_COMPONENT_CONFIGURER.put("name", (node, steps) -> steps.i_add_the_image_named_X(node.get("name")));
-        IMAGE_COMPONENT_CONFIGURER.put("link", (node, steps) -> steps.i_add_X_to_the_link_field(node.get("link")));
+        IMAGE_COMPONENT_CONFIGURER.put("name", (node, steps) -> steps.image().i_add_the_image_named_X(node.get("name")));
+        IMAGE_COMPONENT_CONFIGURER.put("link", (node, steps) -> steps.image().i_add_X_to_the_link_field(node.get("link")));
     }
 
     private ImageComponentConfigurer() {

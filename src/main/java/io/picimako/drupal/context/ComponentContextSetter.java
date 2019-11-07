@@ -1,5 +1,7 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.steps.DrupalPageSteps;
+
 /**
  * It sets the component context for further configuration actions. It invokes a dedicated method from a pre-configured
  * step definitions class that sets an underlying field, property, variable, etc. storing the context.

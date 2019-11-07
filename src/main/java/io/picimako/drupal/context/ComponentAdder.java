@@ -1,8 +1,9 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.steps.DrupalPageSteps;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Contains configuration for mapping {@link ParagraphNodeType}s and {@link ModifierNodeType}s to step definition

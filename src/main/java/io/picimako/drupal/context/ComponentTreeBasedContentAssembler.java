@@ -1,5 +1,8 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
+import io.picimako.drupal.context.steps.DrupalPageSteps;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

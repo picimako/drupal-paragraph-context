@@ -1,6 +1,8 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.steps;
 
 import io.cucumber.java.en.When;
+import io.picimako.drupal.context.ModifierNodeType;
+import io.picimako.drupal.context.ParagraphNodeType;
 
 /**
  * Step definitions class implementing some methods for adding different components to a Drupal page.
