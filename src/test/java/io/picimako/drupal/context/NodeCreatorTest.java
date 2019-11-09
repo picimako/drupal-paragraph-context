@@ -82,7 +82,7 @@ public class NodeCreatorTest {
     public void shouldThrowExceptionWhenConfigurationEndsWithAKeyValuePairSeparator() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> nodeCreator.createNode("---* url: someurl,"))
-                .withMessage("The configuration node ends with a comma,"
+                .withMessage("The configuration node ends with a ':',"
                         + " which is not considered a valid configuration node value.");
     }
 
@@ -90,7 +90,7 @@ public class NodeCreatorTest {
     public void shouldThrowExceptionWhenConfigurationEndsWithAKeyValuePairSeparatorAndWhitespace() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> nodeCreator.createNode("---* url: someurl, "))
-                .withMessage("The configuration node ends with a comma,"
+                .withMessage("The configuration node ends with a ':',"
                         + " which is not considered a valid configuration node value.");
     }
 

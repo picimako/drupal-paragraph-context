@@ -4,6 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.ConfigurationNodeConfigParser.CONFIG_ITEM_DELIMITER;
+import static io.picimako.drupal.context.ConfigurationNodeConfigParser.CONFIG_KEY_VALUE_DELIMITER;
+import static java.lang.String.format;
 
 /**
  * Parses lines (representing components or configurations) from a String component tree and converts them to different
@@ -27,6 +30,13 @@ public class NodeCreator {
     private static final Pattern PARAGRAPH_NODE_PATTERN = Pattern.compile("(?<level>-+) (?<type>[A-Z_]+)");
     private static final Pattern MODIFIER_NODE_PATTERN = Pattern.compile("(?<level>-+)@ (?<type>[A-Z_]+)");
     private static final Pattern CONFIGURATION_NODE_PATTERN = Pattern.compile("-+\\* (?<config>.*)");
+    private static final String CONFIGURATION_NODE_ENDING_PATTERN = format(".*%s *$", CONFIG_ITEM_DELIMITER);
+
+    private static final String INCORRECT_NODE_DEFINITION_ENDING_MESSAGE = format("The configuration node ends with a '%s',"
+        + " which is not considered a valid configuration node value.", CONFIG_KEY_VALUE_DELIMITER);
+    private static final String INCORRECT_KEY_VALUE_PAIR_DEFINITION_MESSAGE = format("The configuration node doesn't contain a valid"
+        + " key-value pair. They should be in the following format: <key>%s<value>", CONFIG_KEY_VALUE_DELIMITER);
+
     private static final String LEVEL = "level";
     private static final String TYPE = "type";
     private static final String CONFIG = "config";
@@ -61,38 +71,41 @@ public class NodeCreator {
         return node;
     }
 
-    private ComponentNode createParagraphNode(Matcher componentNodeMatcher) {
-        NodeType nodeType = determineNodeType(componentNodeMatcher.group(TYPE));
-        return new ComponentNode(componentNodeMatcher.group(LEVEL).length(), nodeType);
+    private ComponentNode createParagraphNode(Matcher nodeMatcher) {
+        NodeType nodeType = ParagraphNodeType.valueOf(nodeMatcher.group(TYPE));
+        return new ComponentNode(nodeMatcher.group(LEVEL).length(), nodeType);
     }
 
-    private ComponentNode createModifierNode(Matcher modifierNodeMatcher) {
-        ComponentNode node = createParagraphNode(modifierNodeMatcher);
-        node.setModifierNode(node.getType() instanceof ModifierNodeType);
+    private ComponentNode createModifierNode(Matcher nodeMatcher) {
+        NodeType nodeType = ModifierNodeType.valueOf(nodeMatcher.group(TYPE));
+        ComponentNode node = new ComponentNode(nodeMatcher.group(LEVEL).length(), nodeType);
+        node.setModifierNode(true);
         return node;
     }
 
     private Node createConfigurationNode(String line) {
         Matcher configurationNodeMatcher = CONFIGURATION_NODE_PATTERN.matcher(line);
         if (configurationNodeMatcher.matches()) {
-            checkArgument(line.contains(":"), "The configuration node doesn't contain a valid"
-                + " key-value pair. They should be in the following format: <key>:<value>");
-            checkArgument(!line.matches(".*, *$"), "The configuration node ends with a comma,"
-                + " which is not considered a valid configuration node value.");
+            validatePresenceOfKeyValueDelimiter(line);
+            validateNodeDefinitionEnding(line);
             return new ConfigurationNode(parser.parseConfigurationValues(configurationNodeMatcher.group(CONFIG)));
         } else {
             throw new IllegalArgumentException("The provided line from the component tree is not valid: [" + line + "]");
         }
     }
 
-    private NodeType determineNodeType(String type) {
-        NodeType nodeType;
-        try {
-            nodeType = ParagraphNodeType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            nodeType = ModifierNodeType.valueOf(type);
-        }
-        return nodeType;
+    //------------ Validate configuration node ------------
+
+    private void validatePresenceOfKeyValueDelimiter(String line) {
+        checkArgument(line.contains(CONFIG_KEY_VALUE_DELIMITER), INCORRECT_KEY_VALUE_PAIR_DEFINITION_MESSAGE);
+    }
+
+    private void validateNodeDefinitionEnding(String line) {
+        checkArgument(violatesLineEndingPattern(line), INCORRECT_NODE_DEFINITION_ENDING_MESSAGE);
+    }
+
+    private boolean violatesLineEndingPattern(String line) {
+        return !line.matches(CONFIGURATION_NODE_ENDING_PATTERN);
     }
 
     /**

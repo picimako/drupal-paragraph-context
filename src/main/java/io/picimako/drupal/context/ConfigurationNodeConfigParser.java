@@ -3,6 +3,7 @@ package io.picimako.drupal.context;
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -10,7 +11,6 @@ import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -19,9 +19,12 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class ConfigurationNodeConfigParser {
 
+    public static final String CONFIG_ITEM_DELIMITER = ",";
+    public static final String CONFIG_KEY_VALUE_DELIMITER = ":";
+    private static final String ESCAPED_CONFIG_ITEM_DELIMITER_PATTERN = "\\\\" + CONFIG_ITEM_DELIMITER;
     private static final Pattern QUOTED_VALUE_PATTERN = Pattern.compile("^\"(?<value>.*)\"$");
-    private final Splitter keyValuePairSplitter = Splitter.onPattern("(?<!\\\\),");
-    private final Splitter keyValueSplitter = Splitter.on(":").limit(2);
+    private final Splitter keyValuePairSplitter = Splitter.onPattern("(?<!\\\\)" + CONFIG_ITEM_DELIMITER);
+    private final Splitter keyValueSplitter = Splitter.on(CONFIG_KEY_VALUE_DELIMITER).limit(2);
 
     /**
      * Parses the argument configuration value (consisting of key-value pairs) and collects them in a String/String map.
@@ -66,7 +69,7 @@ public class ConfigurationNodeConfigParser {
         List<String> keyValuePairs = keyValuePairSplitter
             .splitToList(configuration)
             .stream()
-            .map(kv -> kv.replaceAll("\\\\,", ","))
+            .map(kv -> kv.replaceAll(ESCAPED_CONFIG_ITEM_DELIMITER_PATTERN, CONFIG_ITEM_DELIMITER))
             .collect(toList());
 
         checkArgument(isAllKeyValuePairHaveKeyValueDelimiter(keyValuePairs),
@@ -75,7 +78,7 @@ public class ConfigurationNodeConfigParser {
     }
 
     private boolean isAllKeyValuePairHaveKeyValueDelimiter(List<String> keyValuePairs) {
-        return keyValuePairs.stream().allMatch(kvp -> kvp.contains(":"));
+        return keyValuePairs.stream().allMatch(kvp -> kvp.contains(CONFIG_KEY_VALUE_DELIMITER));
     }
 
     /**
@@ -99,22 +102,23 @@ public class ConfigurationNodeConfigParser {
      * @return the map of configuration key and value entries
      */
     private Map<String, String> splitToKeysAndValues(List<String> keyValuePairs) {
-        return keyValuePairs.stream()
-            .map(kvp -> StringUtils.stripStart(kvp, null))
-            .collect(toMap(
-                kv -> keyValueSplitter.splitToList(kv).get(0),
-                this::parseValue));
+        Map<String, String> split = new LinkedHashMap<>();
+        keyValuePairs.forEach(kvp -> {
+            String strippedKvp = StringUtils.stripStart(kvp, null);
+            List<String> splitList = keyValueSplitter.splitToList(strippedKvp);
+            split.put(splitList.get(0), parseValue(splitList.get(1)));
+        });
+        return split;
     }
 
     /**
-     * Retrieves the value from the argument key-value pair. If the value is also enclosed in quotation marks,
-     * it gets the value from between them.
+     * Retrieves the actual value from the argument configuration value. If the value is also enclosed in
+     * quotation marks, it gets the value from between them.
      *
-     * @param kv a configuration key-value pair
+     * @param value a configuration value
      * @return the actual configuration value
      */
-    private String parseValue(String kv) {
-        String value = keyValueSplitter.splitToList(kv).get(1);
+    private String parseValue(String value) {
         Matcher quotedValueMatcher = QUOTED_VALUE_PATTERN.matcher(value);
         return quotedValueMatcher.matches() ? quotedValueMatcher.group("value") : value;
     }
