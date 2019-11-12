@@ -71,6 +71,7 @@ public class ComponentTreeBasedContentAssemblerTest {
 
         verify(nodeCreator).createNode("- CONTAINER");
         verify(tree).addNode(container, ComponentNode.ABSENT);
+        verify(tree).getParentNode(container);
         verify(contextSetter, never()).setContext(any(), any());
         verify(componentAdder).addComponentToPage(ComponentNode.ABSENT, container);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
@@ -144,6 +145,7 @@ public class ComponentTreeBasedContentAssemblerTest {
     private void verifyComponent(String nodeString, ComponentNode currentNode, ComponentNode previousNode) {
         verify(nodeCreator).createNode(nodeString);
         verify(tree).addNode(currentNode, previousNode);
+        verify(tree).getParentNode(currentNode);
         verify(contextSetter).setContext(any(ComponentTree.class), eq(currentNode));
         verify(componentAdder).addComponentToPage(previousNode, currentNode);
     }
