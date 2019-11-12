@@ -21,7 +21,8 @@ import static java.lang.String.format;
  * {@code "---@ ABSOLUTE_HEIGHT_MODIFIER"}, meaning the following is not valid: {@code "COLORS_MODIFIER"}.
  * <p>
  * A {@link ConfigurationNode} should begin with at least 1 hyphen (should be aligned with the component it is referring to
- * but there is no validation for that), followed by a whitespace, and followed by a list of key-value pairs having
+ * but there is no validation for that), or no hyphen for configuration that is not meant to be component specific but
+ * specific to the content itself being created, followed by a whitespace, and followed by a list of key-value pairs having
  * the following pattern: {@code keyA:valueA, keyB:valueB}. (There is also no validation here for the format of the
  * key-value pairs.)
  */
@@ -29,7 +30,7 @@ public class NodeCreator {
 
     private static final Pattern PARAGRAPH_NODE_PATTERN = Pattern.compile("(?<level>-+) (?<type>[A-Z_]+)");
     private static final Pattern MODIFIER_NODE_PATTERN = Pattern.compile("(?<level>-+)@ (?<type>[A-Z_]+)");
-    private static final Pattern CONFIGURATION_NODE_PATTERN = Pattern.compile("-+\\* (?<config>.*)");
+    private static final Pattern CONFIGURATION_NODE_PATTERN = Pattern.compile("-*\\* (?<config>.*)");
     private static final String CONFIGURATION_NODE_ENDING_PATTERN = format(".*%s *$", CONFIG_ITEM_DELIMITER);
 
     private static final String INCORRECT_NODE_DEFINITION_ENDING_MESSAGE = format("The configuration node ends with a '%s',"

@@ -38,6 +38,7 @@ public class NodeCreatorValidNodeKindTest {
             {"---* url: something, color: "},
             {"---* url: something, color: rgba(0\\,0\\,0\\,0)"},
 
+            {"* url:\" something\""},
             {"---* url:\" \""},
             {"---* url:\" something\""},
             {"---* url:\" something\", color:"},

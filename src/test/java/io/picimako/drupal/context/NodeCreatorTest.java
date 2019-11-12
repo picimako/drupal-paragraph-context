@@ -64,6 +64,15 @@ public class NodeCreatorTest {
     }
 
     @Test
+    public void shouldConvertRootLevelConfigurationNode() {
+        ReflectionTestUtils.setField(nodeCreator, "parser", parser, ConfigurationNodeConfigParser.class);
+        when(parser.parseConfigurationValues("url:someUrl")).thenReturn(Map.of("url", "someUrl"));
+
+        ConfigurationNode node = (ConfigurationNode) nodeCreator.createNode("* url:someUrl");
+        assertThat(node.get("url")).isEqualTo("someUrl");
+    }
+
+    @Test
     public void shouldThrowExceptionWhenConfigurationConsistsOnlyOfAKeyOrAValue() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> nodeCreator.createNode("--- asdsa"))

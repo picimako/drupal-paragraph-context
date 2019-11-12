@@ -85,9 +85,11 @@ And to be able to do something with this whole library, the entry point is `Comp
 The followings are configuration node values listing which ones are valid and which ones are invalid:
 
 #### Valid values
+
 **Unquoted**
 - ---* url:
 - (see the whitespace at the end)---* url:  
+- * url:something
 - ---* url: something
 - ---* url: something, color:
 - (see the whitespace at the end)---* url: something, color:   
