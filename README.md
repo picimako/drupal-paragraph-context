@@ -143,10 +143,10 @@ There is also support for configurations to be defined in multiple table rows, i
 of the entry must include the component definition like this:
 
 ```gherkin
-| > CONTAINER           | bg:#fff                               |
-| >> LAYOUT             |                                       |
-| >>> IMAGE             | name:some-image.png                   |
-|                       | link:/some/path                       |
+| > CONTAINER | bg:#fff             |
+| >> LAYOUT   |                     |
+| >>> IMAGE   | name:some-image.png |
+|             | link:/some/path     |
 ```
 
 The last two configurations are both applied to the same image component in this case.
@@ -154,10 +154,10 @@ The last two configurations are both applied to the same image component in this
 However if the table would defined as:
 
 ```gherkin
-| > CONTAINER           | bg:#fff                               |
-| >> LAYOUT             |                                       |
-| >>> IMAGE             | name:some-image.png                   |
-| >>> IMAGE             | link:/some/path                       |
+| > CONTAINER | bg:#fff             |
+| >> LAYOUT   |                     |
+| >>> IMAGE   | name:some-image.png |
+| >>> IMAGE   | link:/some/path     |
 ```
 
 there would be two image components added to the layout, and the last two configurations would be applied to two
