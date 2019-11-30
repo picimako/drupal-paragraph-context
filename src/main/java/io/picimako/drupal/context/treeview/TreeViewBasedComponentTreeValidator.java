@@ -26,17 +26,10 @@ public class TreeViewBasedComponentTreeValidator {
      * <ul>
      * <li>
      * Modifier nodes must be defined at the same level as the previous paragraph and modifier nodes,
-     * thus if a modifier node is define on a lower level than the previous component node, it will thrown an exception.
+     * thus if a modifier node is defined on a lower level than the previous component node, it will thrown an exception.
      * <p>
      * This, at the same time, restricts the modifier definition to happen right after a paragraph, or if there are
-     * multiple modifiers, then all modifiers at the same level with the paragraph, e.g.:
-     * <pre>
-     * - CONTAINER
-     * -- LAYOUT
-     * --- IMAGE
-     * ---@ IMAGE_FX_MODIFIER
-     * </pre>
-     * or
+     * multiple modifiers, then to have all modifiers at the same level with the paragraph, e.g.:
      * <pre>
      * - CONTAINER
      * -- LAYOUT

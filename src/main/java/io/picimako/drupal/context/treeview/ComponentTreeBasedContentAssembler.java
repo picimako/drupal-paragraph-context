@@ -68,7 +68,7 @@ public class ComponentTreeBasedContentAssembler {
     }
 
     /**
-     * Assembles a Drupal content.
+     * Assembles a Drupal or other CMS content.
      * <p>
      * The steps it takes to parse nodes and execute configuration nodes are the following:
      * <ul>
