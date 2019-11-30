@@ -30,7 +30,7 @@ public class ComponentNode implements Node {
 
     private ComponentNode() {
         this.level = 0;
-        this.type = null;
+        this.type = ParagraphNodeType.ABSENT;
     }
 
     /**

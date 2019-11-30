@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
  * Represents a node in the component tree that holds information for configuring a given component.
  * <p>
  * Configuration nodes are always one-liners and represent a list of String/String key-value mappings.
- * See pattern in: {@link NodeCreator}.
+ * See pattern in on of the {@link NodeCreator} implementations.
  */
 @EqualsAndHashCode
 @ToString

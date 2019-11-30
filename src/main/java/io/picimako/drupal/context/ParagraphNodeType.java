@@ -8,6 +8,7 @@ package io.picimako.drupal.context;
  * certain level(s) or under certain component(s).
  */
 public enum ParagraphNodeType implements NodeType {
+    ABSENT,
     //Paragraphs
     CONTAINER,
     LAYOUT,
