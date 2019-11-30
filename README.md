@@ -163,6 +163,9 @@ However if the table would defined as:
 there would be two image components added to the layout, and the last two configurations would be applied to two
 different image components.
 
+The list of entries are provided to the content assembler class as a list of `ComponentAndConfiguration` objects for
+which one might have to introduce a kind of data table type converter.
+
 There is one another difference between this and the tree view based variants that in this case configurations
 don't have a prefix at all. They are simply defined in the right-hand side column.
 
