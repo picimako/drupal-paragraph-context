@@ -1,5 +1,7 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
 
+import io.picimako.drupal.context.ConfigurationNode;
+import io.picimako.drupal.context.treeview.TreeViewBasedNodeCreator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit test for {@link NodeCreator}.
+ * Unit test for {@link TreeViewBasedNodeCreator}.
  */
 @RunWith(Parameterized.class)
 public class NodeCreatorValidNodeKindTest {
@@ -21,11 +23,11 @@ public class NodeCreatorValidNodeKindTest {
     @Parameter
     public String nodeValue;
 
-    private NodeCreator nodeCreator;
+    private TreeViewBasedNodeCreator nodeCreator;
 
     @Before
     public void setup() {
-        nodeCreator = new NodeCreator();
+        nodeCreator = new TreeViewBasedNodeCreator();
     }
 
     @Parameters

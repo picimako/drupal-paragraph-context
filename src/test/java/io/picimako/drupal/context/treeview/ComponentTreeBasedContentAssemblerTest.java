@@ -1,5 +1,14 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
 
+import io.picimako.drupal.context.ComponentAdder;
+import io.picimako.drupal.context.ComponentConfigurer;
+import io.picimako.drupal.context.ComponentContextSetter;
+import io.picimako.drupal.context.ComponentNode;
+import io.picimako.drupal.context.ComponentTree;
+import io.picimako.drupal.context.ConfigurationNode;
+import io.picimako.drupal.context.ModifierNodeType;
+import io.picimako.drupal.context.NodeType;
+import io.picimako.drupal.context.ParagraphNodeType;
 import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
 import io.picimako.drupal.context.steps.DrupalPageSteps;
 import org.junit.Before;
@@ -27,7 +36,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 public class ComponentTreeBasedContentAssemblerTest {
 
     @Mock
-    private NodeCreator nodeCreator;
+    private TreeViewBasedNodeCreator nodeCreator;
     @Mock
     private ComponentAdder componentAdder;
     @Mock
@@ -47,7 +56,7 @@ public class ComponentTreeBasedContentAssemblerTest {
     public void setup() {
         initMocks(this);
         assembler = new ComponentTreeBasedContentAssembler(drupalPageSteps, configurationSteps);
-        setField(assembler, "nodeCreator", nodeCreator, NodeCreator.class);
+        setField(assembler, "nodeCreator", nodeCreator, TreeViewBasedNodeCreator.class);
         setField(assembler, "componentAdder", componentAdder, ComponentAdder.class);
         setField(assembler, "componentConfigurer", componentConfigurer, ComponentConfigurer.class);
         setField(assembler, "contextSetter", contextSetter, ComponentContextSetter.class);

@@ -1,5 +1,7 @@
 package io.picimako.drupal.context;
 
+import io.picimako.drupal.context.treeview.TreeViewBasedComponentTreeValidator;
+import io.picimako.drupal.context.treeview.TreeViewBasedNodeCreator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -13,19 +15,19 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
- * Unit test for {@link ComponentTreeValidator}.
+ * Unit test for {@link TreeViewBasedComponentTreeValidator}.
  */
-public class ComponentTreeValidatorTest {
+public class TreeViewBasedComponentTreeValidatorTest {
 
     @Mock
-    private NodeCreator nodeCreator;
-    private ComponentTreeValidator componentTreeValidator;
+    private TreeViewBasedNodeCreator nodeCreator;
+    private TreeViewBasedComponentTreeValidator componentTreeValidator;
 
     @Before
     public void setup() {
         initMocks(this);
-        componentTreeValidator = new ComponentTreeValidator();
-        setField(componentTreeValidator, "nodeCreator", nodeCreator, NodeCreator.class);
+        componentTreeValidator = new TreeViewBasedComponentTreeValidator();
+        setField(componentTreeValidator, "nodeCreator", nodeCreator, TreeViewBasedNodeCreator.class);
     }
 
     @Test

@@ -1,6 +1,12 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
 
 
+import io.picimako.drupal.context.ComponentNode;
+import io.picimako.drupal.context.ConfigurationNode;
+import io.picimako.drupal.context.ConfigurationNodeConfigParser;
+import io.picimako.drupal.context.ModifierNodeType;
+import io.picimako.drupal.context.Node;
+import io.picimako.drupal.context.ParagraphNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,18 +20,18 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Unit test for {@link NodeCreator}.
+ * Unit test for {@link TreeViewBasedNodeCreator}.
  */
-public class NodeCreatorTest {
+public class TreeViewBasedNodeCreatorTest {
 
     @Mock
     public ConfigurationNodeConfigParser parser;
-    private NodeCreator nodeCreator;
+    private TreeViewBasedNodeCreator nodeCreator;
 
     @Before
     public void setup() {
         initMocks(this);
-        nodeCreator = new NodeCreator();
+        nodeCreator = new TreeViewBasedNodeCreator();
     }
 
     @Test
@@ -105,16 +111,16 @@ public class NodeCreatorTest {
 
     @Test
     public void shouldBeConfigurationNode() {
-        assertThat(NodeCreator.isConfigurationNode("-* url: something")).isTrue();
+        assertThat(TreeViewBasedNodeCreator.isConfigurationNode("-* url: something")).isTrue();
     }
 
     @Test
     public void shouldNotConvertParagraphToConfigurationNode() {
-        assertThat(NodeCreator.isConfigurationNode("-- CONTAINER")).isFalse();
+        assertThat(TreeViewBasedNodeCreator.isConfigurationNode("-- CONTAINER")).isFalse();
     }
 
     @Test
     public void shouldNotConvertModifierToConfigurationNode() {
-        assertThat(NodeCreator.isConfigurationNode("--@ COLORS_MODIFIER")).isFalse();
+        assertThat(TreeViewBasedNodeCreator.isConfigurationNode("--@ COLORS_MODIFIER")).isFalse();
     }
 }

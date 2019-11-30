@@ -1,5 +1,12 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
 
+import io.picimako.drupal.context.ComponentAdder;
+import io.picimako.drupal.context.ComponentConfigurer;
+import io.picimako.drupal.context.ComponentContextSetter;
+import io.picimako.drupal.context.ComponentNode;
+import io.picimako.drupal.context.ComponentTree;
+import io.picimako.drupal.context.ConfigurationNode;
+import io.picimako.drupal.context.Node;
 import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
 import io.picimako.drupal.context.steps.DrupalPageSteps;
 
@@ -36,8 +43,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class ComponentTreeBasedContentAssembler {
 
     private final ComponentTree tree = new ComponentTree();
-    private final NodeCreator nodeCreator = new NodeCreator();
-    private final ComponentTreeValidator componentTreeValidator = new ComponentTreeValidator();
+    private final TreeViewBasedNodeCreator nodeCreator = new TreeViewBasedNodeCreator();
+    private final TreeViewBasedComponentTreeValidator componentTreeValidator = new TreeViewBasedComponentTreeValidator();
     private final ComponentConfigurer componentConfigurer;
     private final ComponentAdder componentAdder;
     private final ComponentContextSetter contextSetter;
@@ -73,7 +80,7 @@ public class ComponentTreeBasedContentAssembler {
      *          <ul>
      *           <li>it saves the nodes in a {@link ComponentTree},</li>
      *           <li>if there is still another, not yet processed node, besides the current node in the tree,
-     *           the it sets the path leading to the current node as the context,</li>
+     *           then it sets the path leading to the current node as the context,</li>
      *           <li>invokes the methods that add the component to the actual content/page.</li>
      *          </ul></li>
      *       <li>In case of Configuration nodes it executes the Gherkin steps or any other actions
@@ -87,25 +94,23 @@ public class ComponentTreeBasedContentAssembler {
      *     the whole tree in advance just to validate this. Also I consider this a really big edge case.</li>
      *     <li>Whether a configuration node is put after a component node that is not configuration holder, or is not
      *     the proper configuration for that Component. That will be fairly evident when the test execution fails.</li>
-     *     <li>Whether the first node in the argument tree is a configuration node. I don't think there is any
-     *     validation necessary for that since there may be such data that doesn't require any context, like
-     *     Content Title, meta data, etc.</li>
      * </ul>
      */
     public void assembleContent(String componentTree) {
         checkArgument(!isBlank(componentTree), "There is no component tree to process. It should not be blank.");
         componentTreeValidator.validateTree(componentTree);
 
-        AssemblerContext assemblerCtx = new AssemblerContext(componentTree.split("\n"));
+        TreeViewAssemblerContext assemblerCtx = new TreeViewAssemblerContext(componentTree.split("\n"));
         for (int i = 0; i < assemblerCtx.nodeCount(); i++) {
+            //NOTE: somewhere inside this for loop additional logging might be placed to track the progress of the assembler
             String line = assemblerCtx.getStringNode(i);
             assemblerCtx.setIndex(i);
             Node node = nodeCreator.createNode(line);
             if (node instanceof ComponentNode) {
                 ComponentNode currentNode = (ComponentNode) node;
                 tree.addNode(currentNode, assemblerCtx.getPreviousComponentNode());
-                componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
                 setComponentContext(currentNode, assemblerCtx);
+                componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
                 assemblerCtx.setPreviousComponentNode(currentNode);
             } else {
                 componentConfigurer.configure(assemblerCtx.getPreviousComponentNode().getType(), (ConfigurationNode) node);
@@ -119,7 +124,7 @@ public class ComponentTreeBasedContentAssembler {
      * or a component node that is one level deeper than this node (TODO: no validation yet),
      * or a Modifier node.
      */
-    private void setComponentContext(ComponentNode currentNode, AssemblerContext context) {
+    private void setComponentContext(ComponentNode currentNode, TreeViewAssemblerContext context) {
         if (context.hasNextNode()) {
             contextSetter.setContext(tree, currentNode);
         }

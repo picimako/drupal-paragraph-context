@@ -1,15 +1,23 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
+
+import io.picimako.drupal.context.ComponentNode;
+import io.picimako.drupal.context.ConfigurationNodeConfigParser;
+import io.picimako.drupal.context.Node;
+import io.picimako.drupal.context.treeview.TreeViewAssemblerContext;
+import io.picimako.drupal.context.treeview.TreeViewBasedNodeCreator;
 
 /**
  * Validates the input component tree String for various violations.
  * <p>
  * This is used before the actual content creation, so that content creation won't even start if there is a problem
  * with the component tree definition.
+ *
+ * @see ComponentTreeBasedContentAssembler
  */
-public class ComponentTreeValidator {
+public class TreeViewBasedComponentTreeValidator {
 
     private static final String EXCEPTION_MESSAGE_FORMAT = "%s\nParent was: [%s]\nChild was: [%s]";
-    private final NodeCreator nodeCreator = new NodeCreator();
+    private final TreeViewBasedNodeCreator nodeCreator = new TreeViewBasedNodeCreator();
 
     /**
      * Validates the argument component tree for violations.
@@ -53,12 +61,12 @@ public class ComponentTreeValidator {
      * </pre></li>
      *
      * </ul>
-     * ConfigurationNode validation is handled in {@link NodeCreator} and {@link ConfigurationNodeConfigParser}.
+     * ConfigurationNode validation is handled in {@link TreeViewBasedNodeCreator} and {@link ConfigurationNodeConfigParser}.
      *
      * @param componentTree
      */
     public void validateTree(String componentTree) {
-        AssemblerContext ctx = new AssemblerContext();
+        TreeViewAssemblerContext ctx = new TreeViewAssemblerContext();
         for (String line : componentTree.split("\n")) {
             Node node = nodeCreator.createNode(line);
             if (node instanceof ComponentNode) {

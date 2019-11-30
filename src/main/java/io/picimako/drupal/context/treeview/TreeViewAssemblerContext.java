@@ -1,6 +1,7 @@
-package io.picimako.drupal.context;
+package io.picimako.drupal.context.treeview;
 
-import lombok.Builder;
+import io.picimako.drupal.context.ComponentNode;
+import io.picimako.drupal.context.Node;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,17 +11,16 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public final class AssemblerContext {
+public final class TreeViewAssemblerContext {
     private String[] nodes;
     private Node node;
     private int index;
-    @Builder.Default
     private ComponentNode previousComponentNode = ComponentNode.ABSENT;
 
-    public AssemblerContext() {
+    public TreeViewAssemblerContext() {
     }
 
-    public AssemblerContext(String[] nodes) {
+    public TreeViewAssemblerContext(String[] nodes) {
         this.nodes = nodes;
     }
 
