@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <cucumber.version>3.0.2</cucumber.version>
+        <cucumber.version>4.8.0</cucumber.version>
         <!--Checkstyle-->
         <checkstyle.version>3.1.0</checkstyle.version>
         <puppycrawl.version>8.22</puppycrawl.version>
