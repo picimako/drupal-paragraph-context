@@ -110,6 +110,7 @@ public class TableBasedContentAssembler {
             } else if (definition.hasComponentDefinition()) {
                 processComponent(definitions, assemblerCtx, definition);
             } else { //Configuration node (multi-row)
+                contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
                 processConfiguration(assemblerCtx, definition);
             }
         }
@@ -130,7 +131,7 @@ public class TableBasedContentAssembler {
         //Next row may contain either another component or a configuration for the current component
         boolean isThereANextRow = definition != definitions.get(definitions.size() - 1);
         if (isThereANextRow || definition.hasConfiguration()) {
-            contextSetter.setContext(tree, currentNode);
+            contextSetter.setContext(tree, currentNode, true);
         }
         componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
         assemblerCtx.setPreviousComponentNode(currentNode);

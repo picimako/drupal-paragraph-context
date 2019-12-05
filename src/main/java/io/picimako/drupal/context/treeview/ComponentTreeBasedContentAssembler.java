@@ -113,6 +113,7 @@ public class ComponentTreeBasedContentAssembler {
                 componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
                 assemblerCtx.setPreviousComponentNode(currentNode);
             } else {
+                contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
                 componentConfigurer.configure(assemblerCtx.getPreviousComponentNode().getType(), (ConfigurationNode) node);
             }
         }
@@ -126,7 +127,7 @@ public class ComponentTreeBasedContentAssembler {
      */
     private void setComponentContext(ComponentNode currentNode, TreeViewAssemblerContext context) {
         if (context.hasNextNode()) {
-            contextSetter.setContext(tree, currentNode);
+            contextSetter.setContext(tree, currentNode, true);
         }
     }
 }

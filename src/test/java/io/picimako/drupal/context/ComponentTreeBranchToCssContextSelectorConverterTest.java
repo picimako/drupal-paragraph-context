@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
@@ -34,11 +36,11 @@ public class ComponentTreeBranchToCssContextSelectorConverterTest {
         when(assembler.createCssContextSelectorFrom(argThat(list -> list.size() == 1))).thenReturn(".container");
         setField(converter, "selectorAssembler", assembler, CssContextSelectorAssembler.class);
 
-        assertThat(converter.convert(tree, container)).isEqualTo(".container");
+        assertThat(converter.convert(tree, container, false)).isEqualTo(".container");
     }
 
     @Test
-    public void shouldConvertNodesFromBranchIfCurrentNodeIsNotAtRootLevel() {
+    public void shouldConvertNodesFromBranchFromParentNodeIfCurrentNodeIsNotAtRootLevel() {
         ComponentTree tree = new ComponentTree();
         ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
@@ -47,9 +49,25 @@ public class ComponentTreeBranchToCssContextSelectorConverterTest {
         tree.addNode(layout, container);
         tree.addNode(image, layout);
 
-        when(assembler.createCssContextSelectorFrom(argThat(list -> list.size() > 1))).thenReturn(".container .layout div.image");
+        when(assembler.createCssContextSelectorFrom(List.of(container, layout))).thenReturn(".container .layout");
         setField(converter, "selectorAssembler", assembler, CssContextSelectorAssembler.class);
 
-        assertThat(converter.convert(tree, image)).isEqualTo(".container .layout div.image");
+        assertThat(converter.convert(tree, image, true)).isEqualTo(".container .layout");
+    }
+
+    @Test
+    public void shouldConvertNodesFromBranchNotFromParentNodeIfCurrentNodeIsNotAtRootLevel() {
+        ComponentTree tree = new ComponentTree();
+        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
+        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        tree.addNode(container, ComponentNode.ABSENT);
+        tree.addNode(layout, container);
+        tree.addNode(image, layout);
+
+        when(assembler.createCssContextSelectorFrom(List.of(container, layout, image))).thenReturn(".container .layout div.image");
+        setField(converter, "selectorAssembler", assembler, CssContextSelectorAssembler.class);
+
+        assertThat(converter.convert(tree, image, false)).isEqualTo(".container .layout div.image");
     }
 }

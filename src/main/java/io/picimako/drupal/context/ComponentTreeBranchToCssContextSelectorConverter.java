@@ -63,15 +63,17 @@ public class ComponentTreeBranchToCssContextSelectorConverter {
      *
      * @param componentTree the tree to traverse
      * @param currentNode   the node which marks the branch to traverse
+     * @param fromParent    whether to build the context starting from the parent of the current node
      * @return the built CSS context selector
      * @see Traverser#depthFirstPreOrder(Object)
      */
-    public String convert(ComponentTree componentTree, ComponentNode currentNode) {
+    public String convert(ComponentTree componentTree, ComponentNode currentNode, boolean fromParent) {
         List<ComponentNode> nodes;
         if (currentNode.isAtRootLevel()) {
             nodes = singletonList(currentNode);
         } else {
-            nodes = ComponentTreeBranchTraverser.on(componentTree.getGraph()).getAllNodesFromBranchOfLeaf(currentNode);
+            nodes = ComponentTreeBranchTraverser.on(componentTree.getGraph())
+                .getAllNodesFromBranchOfLeaf(fromParent ? componentTree.getParentNode(currentNode) : currentNode);
         }
         return selectorAssembler.createCssContextSelectorFrom(nodes);
     }

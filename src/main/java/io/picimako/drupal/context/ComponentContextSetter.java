@@ -23,8 +23,9 @@ public class ComponentContextSetter {
      *
      * @param tree        the tree to build the context from
      * @param currentNode the current component node
+     * @param fromParent  whether to build the context starting from the parent of the current node
      */
-    public void setContext(ComponentTree tree, ComponentNode currentNode) {
-        steps.i_work_with_X(converter.convert(tree, currentNode));
+    public void setContext(ComponentTree tree, ComponentNode currentNode, boolean fromParent) {
+        steps.i_work_with_X(converter.convert(tree, currentNode, fromParent));
     }
 }
