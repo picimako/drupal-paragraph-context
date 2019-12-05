@@ -1,6 +1,5 @@
 package io.picimako.drupal.context.treeview;
 
-import io.picimako.drupal.context.treeview.TreeViewBasedNodeCreator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

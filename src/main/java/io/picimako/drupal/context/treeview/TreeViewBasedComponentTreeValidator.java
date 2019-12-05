@@ -3,8 +3,6 @@ package io.picimako.drupal.context.treeview;
 import io.picimako.drupal.context.ComponentNode;
 import io.picimako.drupal.context.ConfigurationNodeConfigParser;
 import io.picimako.drupal.context.Node;
-import io.picimako.drupal.context.treeview.TreeViewAssemblerContext;
-import io.picimako.drupal.context.treeview.TreeViewBasedNodeCreator;
 
 /**
  * Validates the input component tree String for various violations.
@@ -72,10 +70,6 @@ public class TreeViewBasedComponentTreeValidator {
 
     private void validateCurrentNode(ComponentNode currentNode, ComponentNode previousNode) {
         if (currentNode.isDeeperThan(previousNode)) {
-            if (currentNode.isModifierNode()) {
-                throwException("Modifier node should be at the same level as the previous paragraph or modifier node.",
-                    previousNode, currentNode);
-            }
             if (!currentNode.isOneLevelDeeperThan(previousNode)) {
                 throwException("Child defined more than 1 level deeper than its immediate parent "
                     + "is not considered a valid child node.", previousNode, currentNode);

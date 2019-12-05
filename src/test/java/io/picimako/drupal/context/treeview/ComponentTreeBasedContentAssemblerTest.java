@@ -21,6 +21,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -81,7 +82,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         verify(nodeCreator).createNode("- CONTAINER");
         verify(tree).addNode(container, ComponentNode.ABSENT);
         verify(tree).getParentNode(container);
-        verify(contextSetter, never()).setContext(any(), any());
+        verify(contextSetter, never()).setContext(any(), any(), anyBoolean());
         verify(componentAdder).addComponentToPage(ComponentNode.ABSENT, container);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
@@ -93,11 +94,11 @@ public class ComponentTreeBasedContentAssemblerTest {
         String componentTree = "- CONTAINER\n"
             + "-- LAYOUT\n"
             + "--- YOUTUBE_VIDEO\n"
-            + "---@ COLORS_MODIFIER";
+            + "----@ COLORS_MODIFIER";
         ComponentNode container = mockComponent("- CONTAINER", 1, ParagraphNodeType.CONTAINER);
         ComponentNode layout = mockComponent("-- LAYOUT", 2, ParagraphNodeType.LAYOUT);
         ComponentNode youtubeVideo = mockComponent("--- YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
-        ComponentNode colorsModifier = mockComponent("---@ COLORS_MODIFIER", 3, ModifierNodeType.COLORS_MODIFIER);
+        ComponentNode colorsModifier = mockComponent("----@ COLORS_MODIFIER", 4, ModifierNodeType.COLORS_MODIFIER);
         colorsModifier.setModifierNode(true);
 
         assembler.assembleContent(componentTree);
@@ -106,10 +107,11 @@ public class ComponentTreeBasedContentAssemblerTest {
         verifyComponent("-- LAYOUT", layout, container);
         verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
 
-        verify(nodeCreator).createNode("---@ COLORS_MODIFIER");
+        verify(nodeCreator).createNode("----@ COLORS_MODIFIER");
         verify(tree).addNode(colorsModifier, youtubeVideo);
-        verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(colorsModifier));
+        verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(colorsModifier), eq(true));
         verify(componentAdder).addComponentToPage(youtubeVideo, colorsModifier);
+        verify(tree).getParentNode(colorsModifier);
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
         assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo, colorsModifier);
@@ -132,9 +134,11 @@ public class ComponentTreeBasedContentAssemblerTest {
 
         verifyComponent("- CONTAINER", container, ComponentNode.ABSENT);
         verifyConfiguration("-* bg-image:background.png", ParagraphNodeType.CONTAINER, "bg-image", "background.png");
+        verify(contextSetter).setContext(any(ComponentTree.class), eq(container), eq(false));
         verifyComponent("-- LAYOUT", layout, container);
         verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
         verifyConfiguration("---* title:an_awesome_youtube_video", ParagraphNodeType.YOUTUBE_VIDEO, "title", "an_awesome_youtube_video");
+        verify(contextSetter).setContext(any(ComponentTree.class), eq(youtubeVideo), eq(false));
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
         assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo);
@@ -155,7 +159,7 @@ public class ComponentTreeBasedContentAssemblerTest {
         verify(nodeCreator).createNode(nodeString);
         verify(tree).addNode(currentNode, previousNode);
         verify(tree).getParentNode(currentNode);
-        verify(contextSetter).setContext(any(ComponentTree.class), eq(currentNode));
+        verify(contextSetter).setContext(any(ComponentTree.class), eq(currentNode), eq(true));
         verify(componentAdder).addComponentToPage(previousNode, currentNode);
     }
 

@@ -63,6 +63,7 @@ Given the following page
   --- IMAGE
   ---* index:1, url:https://duckduckgo.com  <- This is a Configuration node.
   --- RICH_TEXT
+  ----@ ABSOLUTE_HEIGHT_MODIFIER   <- This is also a Component Node but for a Modifier.
   """
 ```
 
@@ -73,6 +74,7 @@ The logic differentiates the following two nodes:
 - **Component node**: they represent Drupal Paragraphs and Modifiers, and are used for building the component context
                   (saved in a component tree), and also signals to the parser that it should add a new component
                   at that point.
+
 - **Configuration node**: they are basically a key-value mapping, so that components can be configured based on them.
                       They are not saved in the component tree, they are used only to invoke configuration logic at certain
                       points.
@@ -91,7 +93,7 @@ The followings are configuration node values listing which ones are valid and wh
 **Unquoted**
 - ---* url:
 - ---* url: (with a whitespace at the end)
-- * url:something
+- \* url:something
 - ---* url: something
 - ---* url: something, color:
 - ---* url: something, color: (with a whitespace at the end)
@@ -169,11 +171,6 @@ which one might have to introduce a kind of data table type converter.
 There is one another difference between this and the tree view based variants that in this case configurations
 don't have a prefix at all. They are simply defined in the right-hand side column.
 
-### Credits
-
-The idea for the data table version came from a friend of mine, so a big thank you goes to
-[limpek07](https://github.com/Limpek07) for that.
-
 ## Additional notes, caveats
 
 - It is worth keeping in mind that depending on the structure of your project some classes may need to be moved to
@@ -181,3 +178,7 @@ different scope (test/compile), different packages or even modules to make them 
 - Passing complex data types such as tables in a configuration property is not possible in a proper way (only by inventing
 some custom one-liner pattern which may parsed accordingly).
 
+## Credits
+
+The idea for the data table version came from a friend of mine, so a big thank you goes to
+[limpek07](https://github.com/Limpek07) for that.

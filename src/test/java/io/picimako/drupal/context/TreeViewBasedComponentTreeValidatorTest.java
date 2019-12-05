@@ -52,7 +52,7 @@ public class TreeViewBasedComponentTreeValidatorTest {
         String componentTree = "- CONTAINER\n"
             + "-- LAYOUT\n"
             + "--- YOUTUBE_VIDEO\n"
-            + "---@ COLORS_MODIFIER";
+            + "----@ COLORS_MODIFIER";
 
         ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
@@ -63,7 +63,7 @@ public class TreeViewBasedComponentTreeValidatorTest {
         when(nodeCreator.createNode("- CONTAINER")).thenReturn(container);
         when(nodeCreator.createNode("-- LAYOUT")).thenReturn(layout);
         when(nodeCreator.createNode("--- YOUTUBE_VIDEO")).thenReturn(youtubeVideo);
-        when(nodeCreator.createNode("---@ COLORS_MODIFIER")).thenReturn(colorsModifier);
+        when(nodeCreator.createNode("----@ COLORS_MODIFIER")).thenReturn(colorsModifier);
 
         assertThatCode(() -> componentTreeValidator.validateTree(componentTree)).doesNotThrowAnyException();
     }
@@ -73,47 +73,23 @@ public class TreeViewBasedComponentTreeValidatorTest {
         String componentTree = "- CONTAINER\n"
             + "-- LAYOUT\n"
             + "--- YOUTUBE_VIDEO\n"
-            + "---@ COLORS_MODIFIER\n"
-            + "---* color:#00CC00";
+            + "----@ COLORS_MODIFIER\n"
+            + "----* color:#00CC00";
 
         ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
         ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
         ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
-        ComponentNode colorsModifier = new ComponentNode(3, ModifierNodeType.COLORS_MODIFIER);
+        ComponentNode colorsModifier = new ComponentNode(4, ModifierNodeType.COLORS_MODIFIER);
         colorsModifier.setModifierNode(true);
         ConfigurationNode colorsModifierConfig = new ConfigurationNode(Map.of("color", "#00CC00"));
 
         when(nodeCreator.createNode("- CONTAINER")).thenReturn(container);
         when(nodeCreator.createNode("-- LAYOUT")).thenReturn(layout);
         when(nodeCreator.createNode("--- YOUTUBE_VIDEO")).thenReturn(youtubeVideo);
-        when(nodeCreator.createNode("---@ COLORS_MODIFIER")).thenReturn(colorsModifier);
-        when(nodeCreator.createNode("---* color:#00CC00")).thenReturn(colorsModifierConfig);
+        when(nodeCreator.createNode("----@ COLORS_MODIFIER")).thenReturn(colorsModifier);
+        when(nodeCreator.createNode("----* color:#00CC00")).thenReturn(colorsModifierConfig);
 
         assertThatCode(() -> componentTreeValidator.validateTree(componentTree)).doesNotThrowAnyException();
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenModifierIsDefinedOnADeeperLevelThanPreviousComponentNode() {
-        String componentTree = "- CONTAINER\n"
-            + "-- LAYOUT\n"
-            + "--- YOUTUBE_VIDEO\n"
-            + "-----@ COLORS_MODIFIER";
-        ComponentNode container = new ComponentNode(1, ParagraphNodeType.CONTAINER);
-        ComponentNode layout = new ComponentNode(2, ParagraphNodeType.LAYOUT);
-        ComponentNode youtubeVideo = new ComponentNode(3, ParagraphNodeType.YOUTUBE_VIDEO);
-        ComponentNode colorsModifier = new ComponentNode(5, ModifierNodeType.COLORS_MODIFIER);
-        colorsModifier.setModifierNode(true);
-
-        when(nodeCreator.createNode("- CONTAINER")).thenReturn(container);
-        when(nodeCreator.createNode("-- LAYOUT")).thenReturn(layout);
-        when(nodeCreator.createNode("--- YOUTUBE_VIDEO")).thenReturn(youtubeVideo);
-        when(nodeCreator.createNode("-----@ COLORS_MODIFIER")).thenReturn(colorsModifier);
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> componentTreeValidator.validateTree(componentTree))
-            .withMessage("Modifier node should be at the same level as the previous paragraph or modifier node.\n"
-                + "Parent was: [ComponentNode(level=3, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1, isModifierNode=false)]\n"
-                + "Child was: [ComponentNode(level=5, type=COLORS_MODIFIER, occurrenceCountUnderParent=1, isModifierNode=true)]");
     }
 
     @Test

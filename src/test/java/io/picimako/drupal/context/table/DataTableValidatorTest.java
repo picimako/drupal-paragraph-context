@@ -49,12 +49,12 @@ public class DataTableValidatorTest {
     @Test
     public void shouldNotFailValidationForTableWithModifier() {
         List<ComponentAndConfiguration> ccs = List.of(
-            create("> CONTAINER"), create(">> LAYOUT"), create(">>> YOUTUBE_VIDEO"), create(">>>@ COLORS_MODIFIER"));
+            create("> CONTAINER"), create(">> LAYOUT"), create(">>> YOUTUBE_VIDEO"), create(">>>>@ COLORS_MODIFIER"));
 
         mockComponent("> CONTAINER", 1, ParagraphNodeType.CONTAINER);
         mockComponent(">> LAYOUT", 2, ParagraphNodeType.LAYOUT);
         mockComponent(">>> YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
-        mockModifier(">>>@ COLORS_MODIFIER", 3, ModifierNodeType.COLORS_MODIFIER);
+        mockModifier(">>>>@ COLORS_MODIFIER", 4, ModifierNodeType.COLORS_MODIFIER);
 
         assertThatCode(() -> validator.validateTree(ccs)).doesNotThrowAnyException();
     }
@@ -63,13 +63,13 @@ public class DataTableValidatorTest {
     public void shouldNotFailValidationForTableWithModifierAndConfigurationEntries() {
         List<ComponentAndConfiguration> ccs = List.of(
             create("> CONTAINER"), create(">> LAYOUT"), create(">>> YOUTUBE_VIDEO"),
-            create(">>>@ COLORS_MODIFIER", "color:#00CC00"));
+            create(">>>>@ COLORS_MODIFIER", "color:#00CC00"));
 
         mockComponent("> CONTAINER", 1, ParagraphNodeType.CONTAINER);
         mockComponent(">> LAYOUT", 2, ParagraphNodeType.LAYOUT);
         mockComponent(">>> YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
 
-        mockModifier(">>>@ COLORS_MODIFIER", 3, ModifierNodeType.COLORS_MODIFIER);
+        mockModifier(">>>>@ COLORS_MODIFIER", 4, ModifierNodeType.COLORS_MODIFIER);
 
         assertThatCode(() -> validator.validateTree(ccs)).doesNotThrowAnyException();
     }
@@ -88,12 +88,12 @@ public class DataTableValidatorTest {
             create("> CONTAINER"), create(">> LAYOUT"),
             create(">>> YOUTUBE_VIDEO"),
             create("", "color:#00CC00, "),
-            create(">>>@ COLORS_MODIFIER", "color:#00CC00"));
+            create(">>>>@ COLORS_MODIFIER", "color:#00CC00"));
 
         mockComponent("> CONTAINER", 1, ParagraphNodeType.CONTAINER);
         mockComponent(">> LAYOUT", 2, ParagraphNodeType.LAYOUT);
         mockComponent(">>> YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
-        mockModifier(">>>@ COLORS_MODIFIER", 3, ModifierNodeType.COLORS_MODIFIER);
+        mockModifier(">>>>@ COLORS_MODIFIER", 4, ModifierNodeType.COLORS_MODIFIER);
 
         assertThatCode(() -> validator.validateTree(ccs)).doesNotThrowAnyException();
     }
@@ -108,23 +108,6 @@ public class DataTableValidatorTest {
         assertThatCode(() -> validator.validateTree(ccs)).doesNotThrowAnyException();
         verify(nodeCreator).createComponentNode("> CONTAINER");
         verify(nodeCreator, never()).createComponentNode("<");
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenModifierIsDefinedOnADeeperLevelThanPreviousComponentNode() {
-        List<ComponentAndConfiguration> ccs = List.of(
-            create("> CONTAINER"), create(">> LAYOUT"), create(">>> YOUTUBE_VIDEO"), create(">>>>>@ COLORS_MODIFIER"));
-
-        mockComponent("> CONTAINER", 1, ParagraphNodeType.CONTAINER);
-        mockComponent(">> LAYOUT", 2, ParagraphNodeType.LAYOUT);
-        mockComponent(">>> YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
-        mockModifier(">>>>>@ COLORS_MODIFIER", 5, ModifierNodeType.COLORS_MODIFIER);
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> validator.validateTree(ccs))
-            .withMessage("Modifier node should be at the same level as the previous paragraph or modifier node.\n"
-                + "Parent was: [ComponentNode(level=3, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1, isModifierNode=false)]\n"
-                + "Child was: [ComponentNode(level=5, type=COLORS_MODIFIER, occurrenceCountUnderParent=1, isModifierNode=true)]");
     }
 
     @Test

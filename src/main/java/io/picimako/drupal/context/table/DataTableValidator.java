@@ -85,10 +85,6 @@ public class DataTableValidator {
 
     private void validateCurrentNode(ComponentNode currentNode, ComponentNode previousNode) {
         if (currentNode.isDeeperThan(previousNode)) {
-            if (currentNode.isModifierNode()) {
-                throwException("Modifier node should be at the same level as the previous paragraph or modifier node.",
-                    previousNode, currentNode);
-            }
             if (!currentNode.isOneLevelDeeperThan(previousNode)) {
                 throwException("Child defined more than 1 level deeper than its immediate parent "
                     + "is not considered a valid child node.", previousNode, currentNode);
