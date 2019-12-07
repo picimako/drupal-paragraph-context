@@ -84,7 +84,9 @@ public class ComponentTreeBasedContentAssembler {
      *           <li>invokes the methods that add the component to the actual content/page.</li>
      *          </ul></li>
      *       <li>In case of Configuration nodes it executes the Gherkin steps or any other actions
-     *       mapped to the previously parsed and saved Component Node.</li>
+     *       mapped to the previously parsed and saved Component Node.
+     *       <p>
+     *       It also sets the component context but only when the configuration is not a root level one.</li>
      *      </ul></li>
      * </ul>
      * <p>
@@ -113,7 +115,9 @@ public class ComponentTreeBasedContentAssembler {
                 componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
                 assemblerCtx.setPreviousComponentNode(currentNode);
             } else {
-                contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
+                if (assemblerCtx.getPreviousComponentNode() != ComponentNode.ABSENT) {
+                    contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
+                }
                 componentConfigurer.configure(assemblerCtx.getPreviousComponentNode().getType(), (ConfigurationNode) node);
             }
         }

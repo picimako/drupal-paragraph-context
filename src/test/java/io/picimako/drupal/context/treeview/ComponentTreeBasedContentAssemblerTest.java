@@ -144,6 +144,18 @@ public class ComponentTreeBasedContentAssemblerTest {
         assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo);
     }
 
+    @Test
+    public void shouldNotSetContextForRootLevelConfiguration() {
+        String componentTree = "* title:an_awesome_youtube_video";
+        mockConfiguration("* title:an_awesome_youtube_video", Map.of("title", "an_awesome_youtube_video"));
+
+        assembler.assembleContent(componentTree);
+
+        verifyConfiguration("* title:an_awesome_youtube_video", ParagraphNodeType.ABSENT, "title", "an_awesome_youtube_video");
+        verify(contextSetter, never()).setContext(any(ComponentTree.class), eq(ComponentNode.ABSENT), eq(false));
+        verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
+    }
+
     private ComponentNode mockComponent(String nodeString, int level, NodeType nodeType) {
         ComponentNode node = new ComponentNode(level, nodeType);
         when(nodeCreator.createNode(nodeString)).thenReturn(node);

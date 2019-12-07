@@ -90,7 +90,9 @@ public class TableBasedContentAssembler {
      *      </li>
      *      <li>If neither of the two preceding conditions is true, it means that the current entry has only
      *      a configuration part defined, which can happen when the configurations of a component are defined
-     *      in multiple consecutive table rows.</li>
+     *      in multiple consecutive table rows.
+     *      <p>
+     *      It also sets the component context but only when the configuration is not a root level one.</li>
      * </ul>
      * <p>
      * Please note that there is no validation for the following:
@@ -110,7 +112,9 @@ public class TableBasedContentAssembler {
             } else if (definition.hasComponentDefinition()) {
                 processComponent(definitions, assemblerCtx, definition);
             } else { //Configuration node (multi-row)
-                contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
+                if (assemblerCtx.getPreviousComponentNode() != ComponentNode.ABSENT) {
+                    contextSetter.setContext(tree, assemblerCtx.getPreviousComponentNode(), false);
+                }
                 processConfiguration(assemblerCtx, definition);
             }
         }

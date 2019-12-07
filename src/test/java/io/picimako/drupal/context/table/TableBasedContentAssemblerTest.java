@@ -103,7 +103,7 @@ public class TableBasedContentAssemblerTest {
 
         verify(nodeCreator).createConfigurationNode("title:someTitle");
         verify(nodeCreator).createConfigurationNode("path:/some/path");
-        verify(contextSetter).setContext(any(ComponentTree.class), any(ComponentNode.class), eq(false));
+        verify(contextSetter, never()).setContext(any(ComponentTree.class), any(ComponentNode.class), eq(false));
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
     }
 
