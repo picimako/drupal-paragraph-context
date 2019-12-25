@@ -1,7 +1,6 @@
 package io.picimako.drupal.context;
 
 import com.google.common.base.Splitter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.StringUtils.isBlank;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Parses a configuration value (consisting of key-value pairs) coming from a {@link ConfigurationNode}
@@ -104,8 +103,7 @@ public class ConfigurationNodeConfigParser {
     private Map<String, String> splitToKeysAndValues(List<String> keyValuePairs) {
         Map<String, String> split = new LinkedHashMap<>();
         keyValuePairs.forEach(kvp -> {
-            String strippedKvp = StringUtils.stripStart(kvp, null);
-            List<String> splitList = keyValueSplitter.splitToList(strippedKvp);
+            List<String> splitList = keyValueSplitter.splitToList(kvp.stripLeading());
             split.put(splitList.get(0), parseValue(splitList.get(1)));
         });
         return split;

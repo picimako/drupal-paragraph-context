@@ -11,8 +11,8 @@ import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
 import io.picimako.drupal.context.steps.DrupalPageSteps;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.StringUtils.isBlank;
 import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Parses a component tree string from a given format, iterates through its lines and based on what type of node a
