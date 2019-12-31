@@ -2,7 +2,7 @@ package io.picimako.drupal.context;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -23,7 +23,7 @@ public class CssContextSelectorAssembler {
      * @param nodes the tree nodes (from a branch of the tree) to traverse
      */
     public String createCssContextSelectorFrom(List<ComponentNode> nodes) {
-        checkArgument(!nodes.isEmpty(), "There is no node to create CSS selector from."
+        check(!nodes.isEmpty(), "There is no node to create CSS selector from."
                 + " The provided collection of nodes is empty.");
         return nodes.stream().map(this::toCssSelector).collect(joining(CSS_ANY_CHILD_SEPARATOR));
     }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -41,7 +41,7 @@ public class ComponentNode implements Node {
      * @throws IllegalArgumentException when the provided node level is less than 1
      */
     public ComponentNode(int level, NodeType type) {
-        checkArgument(level > 0, "Node level should be at least one. It was: [" + level + "]");
+        check(level > 0, "Node level should be at least one. It was: [" + level + "]");
         this.level = level;
         this.type = requireNonNull(type);
     }
@@ -53,7 +53,7 @@ public class ComponentNode implements Node {
      * @throws IllegalArgumentException when the occurrence count is less than 1
      */
     public void setOccurrenceCountUnderParent(long occurrenceCountUnderParent) {
-        checkArgument(occurrenceCountUnderParent > 0, "Occurrence count under parent should be "
+        check(occurrenceCountUnderParent > 0, "Occurrence count under parent should be "
             + "greater than 0. It was: [" + occurrenceCountUnderParent + "].");
         this.occurrenceCountUnderParent = occurrenceCountUnderParent;
     }

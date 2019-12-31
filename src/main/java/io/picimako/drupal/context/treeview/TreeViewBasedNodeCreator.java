@@ -12,9 +12,9 @@ import io.picimako.drupal.context.ParagraphNodeType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static io.picimako.drupal.context.ConfigurationNodeConfigParser.CONFIG_ITEM_DELIMITER;
 import static io.picimako.drupal.context.ConfigurationNodeConfigParser.CONFIG_KEY_VALUE_DELIMITER;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static java.lang.String.format;
 
 /**
@@ -111,11 +111,11 @@ public class TreeViewBasedNodeCreator implements NodeCreator {
     //------------ Validate configuration node ------------
 
     private void validatePresenceOfKeyValueDelimiter(String line) {
-        checkArgument(line.contains(CONFIG_KEY_VALUE_DELIMITER), INCORRECT_KEY_VALUE_PAIR_DEFINITION_MESSAGE);
+        check(line.contains(CONFIG_KEY_VALUE_DELIMITER), INCORRECT_KEY_VALUE_PAIR_DEFINITION_MESSAGE);
     }
 
     private void validateNodeDefinitionEnding(String line) {
-        checkArgument(violatesLineEndingPattern(line), INCORRECT_NODE_DEFINITION_ENDING_MESSAGE);
+        check(violatesLineEndingPattern(line), INCORRECT_NODE_DEFINITION_ENDING_MESSAGE);
     }
 
     private boolean violatesLineEndingPattern(String line) {

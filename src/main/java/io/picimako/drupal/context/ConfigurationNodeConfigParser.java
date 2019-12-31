@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static io.picimako.drupal.context.util.StringUtils.isBlank;
 import static java.util.stream.Collectors.toList;
 
@@ -36,7 +36,7 @@ public class ConfigurationNodeConfigParser {
      * @throws IllegalArgumentException when the argument configuration is blank
      */
     public Map<String, String> parseConfigurationValues(String configuration) {
-        checkArgument(!isBlank(configuration), "The configuration value should not be blank.");
+        check(!isBlank(configuration), "The configuration value should not be blank.");
         return splitToKeysAndValues(splitToKeyValuePairs(configuration));
     }
 
@@ -66,7 +66,7 @@ public class ConfigurationNodeConfigParser {
             .map(kv -> kv.replaceAll(ESCAPED_CONFIG_ITEM_DELIMITER_PATTERN, CONFIG_ITEM_DELIMITER))
             .collect(toList());
 
-        checkArgument(isAllKeyValuePairHaveKeyValueDelimiter(keyValuePairs),
+        check(isAllKeyValuePairHaveKeyValueDelimiter(keyValuePairs),
             "There is at least one configuration entry that doesn't have a key or a value part.");
         return keyValuePairs;
     }

@@ -10,7 +10,7 @@ import io.picimako.drupal.context.Node;
 import io.picimako.drupal.context.steps.DrupalConfigurationSteps;
 import io.picimako.drupal.context.steps.DrupalPageSteps;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static io.picimako.drupal.context.util.StringUtils.isBlank;
 import static java.util.Objects.requireNonNull;
 
@@ -99,7 +99,7 @@ public class ComponentTreeBasedContentAssembler {
      * </ul>
      */
     public void assembleContent(String componentTree) {
-        checkArgument(!isBlank(componentTree), "There is no component tree to process. It should not be blank.");
+        check(!isBlank(componentTree), "There is no component tree to process. It should not be blank.");
         componentTreeValidator.validateTree(componentTree);
 
         TreeViewAssemblerContext assemblerCtx = new TreeViewAssemblerContext(componentTree.split("\n"));

@@ -12,7 +12,7 @@ import io.picimako.drupal.context.steps.DrupalPageSteps;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -102,7 +102,7 @@ public class TableBasedContentAssembler {
      * </ul>
      */
     public void assembleContent(List<ComponentAndConfiguration> definitions) {
-        checkArgument(!definitions.isEmpty(), "There is no table entry to process. It should not be empty.");
+        check(!definitions.isEmpty(), "There is no table entry to process. It should not be empty.");
         dataTableValidator.validateTree(definitions);
 
         TableBasedAssemblerContext assemblerCtx = new TableBasedAssemblerContext();
@@ -121,9 +121,9 @@ public class TableBasedContentAssembler {
     }
 
     private void processRootLevelConfiguration(TableBasedAssemblerContext assemblerCtx, ComponentAndConfiguration definition) {
-        checkArgument(assemblerCtx.getPreviousComponentNode() == ComponentNode.ABSENT,
+        check(assemblerCtx.getPreviousComponentNode() == ComponentNode.ABSENT,
             "Root level configuration should only be defined in the first row of the data table.");
-        checkArgument(definition.hasConfiguration(),
+        check(definition.hasConfiguration(),
             "Root level configuration definition is empty. It should contain some actual configurations.");
         processConfiguration(assemblerCtx, definition);
     }

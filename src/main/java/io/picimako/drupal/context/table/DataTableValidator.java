@@ -5,7 +5,7 @@ import io.picimako.drupal.context.ConfigurationNodeConfigParser;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static io.picimako.drupal.context.util.Preconditions.check;
 
 /**
  * Validates the input data table for various violations.
@@ -72,7 +72,7 @@ public class DataTableValidator {
      */
     public void validateTree(List<ComponentAndConfiguration> definitions) {
         ComponentNode previousComponentNode = ComponentNode.ABSENT;
-        checkArgument(definitions.stream().anyMatch(ComponentAndConfiguration::hasComponentDefinition),
+        check(definitions.stream().anyMatch(ComponentAndConfiguration::hasComponentDefinition),
             "None of the entries in the input data table has a component defined.");
         for (ComponentAndConfiguration definition : definitions) {
             if (!definition.hasRootLevelConfiguration() && definition.hasComponentDefinition()) {
