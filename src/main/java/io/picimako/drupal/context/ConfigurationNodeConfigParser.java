@@ -1,7 +1,6 @@
 package io.picimako.drupal.context;
 
-import com.google.common.base.Splitter;
-
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +21,6 @@ public class ConfigurationNodeConfigParser {
     public static final String CONFIG_KEY_VALUE_DELIMITER = ":";
     private static final String ESCAPED_CONFIG_ITEM_DELIMITER_PATTERN = "\\\\" + CONFIG_ITEM_DELIMITER;
     private static final Pattern QUOTED_VALUE_PATTERN = Pattern.compile("^\"(?<value>.*)\"$");
-    private final Splitter keyValuePairSplitter = Splitter.onPattern("(?<!\\\\)" + CONFIG_ITEM_DELIMITER);
-    private final Splitter keyValueSplitter = Splitter.on(CONFIG_KEY_VALUE_DELIMITER).limit(2);
 
     /**
      * Parses the argument configuration value (consisting of key-value pairs) and collects them in a String/String map.
@@ -65,9 +62,7 @@ public class ConfigurationNodeConfigParser {
      * @throws IllegalArgumentException when at least one key-value pair doesn't contain a key-value separator
      */
     private List<String> splitToKeyValuePairs(String configuration) {
-        List<String> keyValuePairs = keyValuePairSplitter
-            .splitToList(configuration)
-            .stream()
+        List<String> keyValuePairs = Arrays.stream(configuration.split("(?<!\\\\)" + CONFIG_ITEM_DELIMITER))
             .map(kv -> kv.replaceAll(ESCAPED_CONFIG_ITEM_DELIMITER_PATTERN, CONFIG_ITEM_DELIMITER))
             .collect(toList());
 
@@ -103,8 +98,8 @@ public class ConfigurationNodeConfigParser {
     private Map<String, String> splitToKeysAndValues(List<String> keyValuePairs) {
         Map<String, String> split = new LinkedHashMap<>();
         keyValuePairs.forEach(kvp -> {
-            List<String> splitList = keyValueSplitter.splitToList(kvp.stripLeading());
-            split.put(splitList.get(0), parseValue(splitList.get(1)));
+            String[] splitArray = kvp.stripLeading().split(CONFIG_KEY_VALUE_DELIMITER, 2);
+            split.put(splitArray[0], parseValue(splitArray[1]));
         });
         return split;
     }
