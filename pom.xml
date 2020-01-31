@@ -16,7 +16,7 @@
         <cucumber.version>4.8.0</cucumber.version>
         <!--Checkstyle-->
         <checkstyle.version>3.1.0</checkstyle.version>
-        <puppycrawl.version>8.22</puppycrawl.version>
+        <puppycrawl.version>8.29</puppycrawl.version>
         <checkstyle.skip>false</checkstyle.skip>
         <checkstyle.basedir>${main.basedir}/build/rules</checkstyle.basedir>
         <checkstyle.config.location>${main.basedir}/build/rules/checkstyle_rules.xml</checkstyle.config.location>
