@@ -176,9 +176,15 @@ don't have a prefix at all. They are simply defined in the right-hand side colum
 - It is worth keeping in mind that depending on the structure of your project some classes may need to be moved to
 different scope (test/compile), different packages or even modules to make them available properly.
 - Passing complex data types such as tables in a configuration property is not possible in a proper way (only by inventing
-some custom one-liner pattern which may parsed accordingly).
+some custom one-liner pattern which may be parsed accordingly).
 
 ## Credits
 
 The idea for the data table version came from a friend of mine, so a big thank you goes to
 [limpek07](https://github.com/Limpek07) for that.
+
+## Future plans
+
+For easy migration between the two formats:
+- Create tree layout to data table format converter.
+- Create data table format to tree layout converter.
