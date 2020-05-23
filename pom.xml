@@ -16,7 +16,7 @@
         <cucumber.version>4.8.0</cucumber.version>
         <!--Checkstyle-->
         <checkstyle.version>3.1.0</checkstyle.version>
-        <puppycrawl.version>8.29</puppycrawl.version>
+        <puppycrawl.version>8.30</puppycrawl.version>
         <checkstyle.skip>false</checkstyle.skip>
         <checkstyle.basedir>${main.basedir}/build/rules</checkstyle.basedir>
         <checkstyle.config.location>${main.basedir}/build/rules/checkstyle_rules.xml</checkstyle.config.location>
@@ -41,13 +41,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>28.2-jre</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.integration</groupId>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.10.0</version>
+            <version>3.15.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -105,7 +105,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
