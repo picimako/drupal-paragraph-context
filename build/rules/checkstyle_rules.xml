@@ -2,6 +2,11 @@
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
     <property name="severity" value="warning"/>
+    <module name="LineLength">
+        <property name="severity" value="error"/>
+        <property name="max" value="180"/>
+    </module>
+
     <module name="TreeWalker">
         <module name="SuppressionCommentFilter">
             <property name="offCommentFormat" value="Generated code begins here"/>
@@ -159,9 +164,6 @@
         <!--Javadoc Comments-->
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
-            <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="allowedAnnotations" value="Override,Test,Before,After,BeforeMethod,AfterMethod,BeforeTest,AfterTest,PostConstruct,Bean,DataProvider,Given,When,Then,And,But" />
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
         <module name="JavadocType">
@@ -259,10 +261,6 @@
         </module>
         <!--Regexp-->
         <!--Size Violations-->
-        <module name="LineLength">
-            <property name="severity" value="error"/>
-            <property name="max" value="180"/>
-        </module>
         <module name="MethodLength">
             <property name="max" value="40"/>
             <property name="id" value="MethodLength_Warning"/>
