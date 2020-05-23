@@ -15,6 +15,7 @@ import static java.util.Objects.requireNonNull;
  *     <li>the type of the component, so that they can be converted to {@link ComponentContextSelector}s,</li>
  *     <li>the occurrence count under its parent, so that the component context selectors can be indexed properly.</li>
  *     <li>whether this node is a modifier or a paragraph</li>
+ *     <li>the inline configuration in case of tree view based component tree</li>
  * </ul>
  */
 @Getter
@@ -27,6 +28,8 @@ public class ComponentNode implements Node {
     private long occurrenceCountUnderParent = 1;
     @Setter
     private boolean isModifierNode;
+    @Setter
+    private ConfigurationNode inlineConfig = ConfigurationNode.EMPTY;
 
     private ComponentNode() {
         this.level = 0;
@@ -123,5 +126,14 @@ public class ComponentNode implements Node {
      */
     public boolean hasSameTypeAs(ComponentNode node) {
         return type == node.getType();
+    }
+
+    /**
+     * Checks whether this node has an inline config.
+     *
+     * @return true if the node has an inline config, false otherwise
+     */
+    public boolean hasInlineConfig() {
+        return inlineConfig != ConfigurationNode.EMPTY;
     }
 }

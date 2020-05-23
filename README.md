@@ -57,14 +57,36 @@ The previous example would look something like this:
 
 ```gherkin
 Given the following page
-  """
-  - CONTAINER
-  -- LAYOUT    <- This a Component node.
-  --- IMAGE
-  ---* index:1, url:https://duckduckgo.com  <- This is a Configuration node.
-  --- RICH_TEXT
-  ----@ ABSOLUTE_HEIGHT_MODIFIER   <- This is also a Component Node but for a Modifier.
-  """
+"""
+- CONTAINER
+-- LAYOUT    <- This a Component node.
+--- IMAGE
+---* index:1, url:https://duckduckgo.com  <- This is a Configuration node.
+--- RICH_TEXT
+----@ ABSOLUTE_HEIGHT_MODIFIER   <- This is also a Component Node but for a Modifier.
+"""
+```
+
+To give you insight about all the possible combinations of Component and Configuration nodes, please refer to the example below:
+
+```gherkin
+Given the following page
+"""
+- CONTAINER <- This is a Component node at root (1) level.
+-- LAYOUT
+--- IMAGE   <- This is also a Component node at the 3rd level.
+--- RICH_TEXT >> type:"Full HTML"     <- This is a Component node with an inline configuration.
+---* text: some text
+-- LAYOUT
+--- CAROUSEL
+---- VIDEO
+----* url:https://some.url, initialTime:16    <- This is a Configuration node.
+                                                 The level marker is only for consistency with the rest of the tree.
+---- VIDEO
+----* url:https://some.other/url
+----* initialTime:10     <- Configurations can be defined in multiple rows for the same component, and are handled as separate Configuration nodes.
+-----@ ABSOLUTE_HEIGHT_MODIFIER    <- This is a Modifier Component node for the last VIDEO component.
+"""
 ```
 
 The underlying logic no more uses the context selector path (*CONTAINER > LAYOUT > IMAGE*), instead it constructs
@@ -73,7 +95,8 @@ directly the CSS selector from the tree defined above when it is being traversed
 The logic differentiates the following two nodes:
 - **Component node**: they represent Drupal Paragraphs and Modifiers, and are used for building the component context
                   (saved in a component tree), and also signals to the parser that it should add a new component
-                  at that point.
+                  at that point. It can have an optional inline configuration (only for tree view based content layout)
+                  as well which is a way to create more concise layouts.
 
 - **Configuration node**: they are basically a key-value mapping, so that components can be configured based on them.
                       They are not saved in the component tree, they are used only to invoke configuration logic at certain

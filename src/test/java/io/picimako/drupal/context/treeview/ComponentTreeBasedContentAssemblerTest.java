@@ -103,9 +103,9 @@ public class ComponentTreeBasedContentAssemblerTest {
 
         assembler.assembleContent(componentTree);
 
-        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT);
-        verifyComponent("-- LAYOUT", layout, container);
-        verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
+        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT, ComponentNode.ABSENT);
+        verifyComponent("-- LAYOUT", layout, container, container);
+        verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout, layout);
 
         verify(nodeCreator).createNode("----@ COLORS_MODIFIER");
         verify(tree).addNode(colorsModifier, youtubeVideo);
@@ -122,26 +122,38 @@ public class ComponentTreeBasedContentAssemblerTest {
         String componentTree = "- CONTAINER\n"
             + "-* bg-image:background.png\n"
             + "-- LAYOUT\n"
+            + "--- IMAGE >> url:https://duckduckgo.com\n"
+            + "---* href:/some/image.jpg\n"
             + "--- YOUTUBE_VIDEO\n"
             + "---* title:an_awesome_youtube_video";
         ComponentNode container = mockComponent("- CONTAINER", 1, ParagraphNodeType.CONTAINER);
         mockConfiguration("-* bg-image:background.png", Map.of("bg-image", "background.png"));
         ComponentNode layout = mockComponent("-- LAYOUT", 2, ParagraphNodeType.LAYOUT);
+
+        ComponentNode image = new ComponentNode(3, ParagraphNodeType.IMAGE);
+        image.setInlineConfig(new ConfigurationNode(Map.of("url", "https://duckduckgo.com")));
+        when(nodeCreator.createNode("--- IMAGE >> url:https://duckduckgo.com")).thenReturn(image);
+        mockConfiguration("---* href:/some/image.jpg", Map.of("href", "/some/image.jpg"));
+
         ComponentNode youtubeVideo = mockComponent("--- YOUTUBE_VIDEO", 3, ParagraphNodeType.YOUTUBE_VIDEO);
         mockConfiguration("---* title:an_awesome_youtube_video", Map.of("title", "an_awesome_youtube_video"));
 
         assembler.assembleContent(componentTree);
 
-        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT);
+        verifyComponent("- CONTAINER", container, ComponentNode.ABSENT, ComponentNode.ABSENT);
         verifyConfiguration("-* bg-image:background.png", ParagraphNodeType.CONTAINER, "bg-image", "background.png");
         verify(contextSetter).setContext(any(ComponentTree.class), eq(container), eq(false));
-        verifyComponent("-- LAYOUT", layout, container);
-        verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, layout);
+        verifyComponent("-- LAYOUT", layout, container, container);
+        verifyComponent("--- IMAGE >> url:https://duckduckgo.com", image, layout, layout);
+        verifySingleOrInlineConfiguration(ParagraphNodeType.IMAGE, "url", "https://duckduckgo.com");
+        verifyConfiguration("---* href:/some/image.jpg", ParagraphNodeType.IMAGE, "href", "/some/image.jpg");
+        verify(contextSetter).setContext(any(ComponentTree.class), eq(image), eq(false));
+        verifyComponent("--- YOUTUBE_VIDEO", youtubeVideo, image, layout);
         verifyConfiguration("---* title:an_awesome_youtube_video", ParagraphNodeType.YOUTUBE_VIDEO, "title", "an_awesome_youtube_video");
         verify(contextSetter).setContext(any(ComponentTree.class), eq(youtubeVideo), eq(false));
         verifyNoMoreInteractions(nodeCreator, tree, contextSetter, componentAdder);
 
-        assertThat(tree.getGraph().nodes()).containsExactly(container, layout, youtubeVideo);
+        assertThat(tree.getGraph().nodes()).containsExactly(container, layout, image, youtubeVideo);
     }
 
     @Test
@@ -167,16 +179,20 @@ public class ComponentTreeBasedContentAssemblerTest {
         when(nodeCreator.createNode(nodeString)).thenReturn(node);
     }
 
-    private void verifyComponent(String nodeString, ComponentNode currentNode, ComponentNode previousNode) {
+    private void verifyComponent(String nodeString, ComponentNode currentNode, ComponentNode previousNode, ComponentNode parentNode) {
         verify(nodeCreator).createNode(nodeString);
         verify(tree).addNode(currentNode, previousNode);
         verify(tree).getParentNode(currentNode);
         verify(contextSetter).setContext(any(ComponentTree.class), eq(currentNode), eq(true));
-        verify(componentAdder).addComponentToPage(previousNode, currentNode);
+        verify(componentAdder).addComponentToPage(parentNode, currentNode);
     }
 
     private void verifyConfiguration(String nodeString, NodeType nodeType, String key, String value) {
         verify(nodeCreator).createNode(nodeString);
-        verify(componentConfigurer).configure(eq(nodeType), argThat(node -> node.get(key).equals(value)));
+        verifySingleOrInlineConfiguration(nodeType, key, value);
+    }
+
+    private void verifySingleOrInlineConfiguration(NodeType nodeType, String key, String value) {
+        verify(componentConfigurer).configure(eq(nodeType), argThat(node -> value.equals(node.get(key))));
     }
 }

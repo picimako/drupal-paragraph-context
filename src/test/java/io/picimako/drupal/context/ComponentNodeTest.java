@@ -2,6 +2,8 @@ package io.picimako.drupal.context;
 
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -22,6 +24,14 @@ public class ComponentNodeTest {
         ComponentNode node = new ComponentNode(3, ParagraphNodeType.CONTAINER);
 
         assertThat(node.isAtRootLevel()).isFalse();
+    }
+
+    @Test
+    public void shouldHaveInlineConfiguration() {
+        ComponentNode node = new ComponentNode(3, ParagraphNodeType.CONTAINER);
+        node.setInlineConfig(new ConfigurationNode(Map.of("width", "edge to edge")));
+
+        assertThat(node.hasInlineConfig()).isTrue();
     }
 
     @Test

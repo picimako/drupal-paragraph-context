@@ -113,7 +113,9 @@ public class TreeViewBasedComponentTreeValidatorTest {
             .isThrownBy(() -> componentTreeValidator.validateTree(componentTree))
             .withMessageStartingWith("Child defined more than 1 level deeper than its immediate parent is not "
                 + "considered a valid child node.\n"
-                + "Parent was: [ComponentNode(level=3, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1, isModifierNode=false)]\n"
-                + "Child was: [ComponentNode(level=5, type=IMAGE, occurrenceCountUnderParent=1, isModifierNode=false)]");
+                + "Parent was: [ComponentNode(level=3, type=YOUTUBE_VIDEO, occurrenceCountUnderParent=1, isModifierNode=false, "
+                + "inlineConfig=ConfigurationNode(configurations={}))]\n"
+                + "Child was: [ComponentNode(level=5, type=IMAGE, occurrenceCountUnderParent=1, isModifierNode=false, "
+                + "inlineConfig=ConfigurationNode(configurations={}))]");
     }
 }

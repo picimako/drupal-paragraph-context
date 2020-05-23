@@ -25,6 +25,15 @@ import static java.lang.String.format;
  * then followed by an all upper snake case string, e.g.: {@code "- CONTAINER"} or {@code "-- LAYOUT"},
  * meaning the following is not valid: {@code "CONTAINER"}.
  * <p>
+ * Optionally {@code ComponentNode}s can hold inline configurations in which case the aforementioned component definitions should
+ * be followed by a whitespace, then two "greater than" symbols (>>), another whitespace and the configuration in the same format as
+ * Configuration nodes are defined, except the level identifier.
+ * <p>
+ * This is a valid Component node with inline configuration: {@code --- IMAGE >> url:https://duckduckgo.com}, this one is invalid:
+ * {@code --- IMAGE >> }.
+ * <p>
+ * Inline configurations are not yet supported in Modifier nodes.
+ * <p>
  * A {@link ComponentNode} representing a Modifier should begin with at least 1 hyphen, followed by an {@code @}
  * symbol and a whitespace, then followed by an all upper snake case string, e.g.: {@code "--@ COLORS_MODIFIER"} or
  * {@code "---@ ABSOLUTE_HEIGHT_MODIFIER"}, meaning the following is not valid: {@code "COLORS_MODIFIER"}.
@@ -40,7 +49,7 @@ import static java.lang.String.format;
  */
 public class TreeViewBasedNodeCreator implements NodeCreator {
 
-    private static final Pattern PARAGRAPH_NODE_PATTERN = Pattern.compile("(?<level>-+) (?<type>[A-Z_]+)");
+    private static final Pattern PARAGRAPH_NODE_PATTERN = Pattern.compile("(?<level>-+) (?<type>[A-Z_]+)(?<inlineconfig> >> (?<config>.*))?");
     private static final Pattern MODIFIER_NODE_PATTERN = Pattern.compile("(?<level>-+)@ (?<type>[A-Z_]+)");
     private static final Pattern CONFIGURATION_NODE_PATTERN = Pattern.compile("-*\\* (?<config>.*)");
     private static final String CONFIGURATION_NODE_ENDING_PATTERN = format(".*%s *$", CONFIG_ITEM_DELIMITER);
@@ -53,6 +62,7 @@ public class TreeViewBasedNodeCreator implements NodeCreator {
     private static final String LEVEL = "level";
     private static final String TYPE = "type";
     private static final String CONFIG = "config";
+    private static final String INLINE_CONFIG = "inlineconfig";
 
     private final ConfigurationNodeConfigParser parser = new ConfigurationNodeConfigParser();
 
@@ -86,7 +96,20 @@ public class TreeViewBasedNodeCreator implements NodeCreator {
 
     private ComponentNode createParagraphNode(Matcher nodeMatcher) {
         NodeType nodeType = ParagraphNodeType.valueOf(nodeMatcher.group(TYPE));
-        return new ComponentNode(nodeMatcher.group(LEVEL).length(), nodeType);
+        ComponentNode componentNode = new ComponentNode(nodeMatcher.group(LEVEL).length(), nodeType);
+        if (nodeMatcher.group(INLINE_CONFIG) != null) {
+            if (nodeMatcher.group(CONFIG) != null) {
+                String rawInlineConfig = rawConfigurationNodeFromInlineConfiguration(nodeMatcher, componentNode.getLevel());
+                componentNode.setInlineConfig(createConfigurationNode(rawInlineConfig));
+            } else {
+                throw new IllegalArgumentException("Found inline config initializer (>>) but not actual inline configuration.");
+            }
+        }
+        return componentNode;
+    }
+
+    private String rawConfigurationNodeFromInlineConfiguration(Matcher nodeMatcher, int level) {
+        return "-".repeat(level) + "* " + nodeMatcher.group(CONFIG);
     }
 
     private ComponentNode createModifierNode(Matcher nodeMatcher) {

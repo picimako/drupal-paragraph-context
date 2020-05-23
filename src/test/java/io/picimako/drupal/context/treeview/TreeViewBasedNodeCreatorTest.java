@@ -41,6 +41,24 @@ public class TreeViewBasedNodeCreatorTest {
     }
 
     @Test
+    public void shouldConvertParagraphStringWithInlineConfigToComponentNode() {
+        Node node = new ComponentNode(3, ParagraphNodeType.LAYOUT);
+        ComponentNode createdNode = (ComponentNode) nodeCreator.createNode("--- LAYOUT >> layout:custom");
+        assertThat(createdNode.hasInlineConfig()).isTrue();
+        assertThat(createdNode.getInlineConfig().get("layout")).isEqualTo("custom");
+    }
+
+    @Test
+    public void shouldConvertParagraphStringWithMultipleInlineConfigToComponentNode() {
+        Node node = new ComponentNode(3, ParagraphNodeType.LAYOUT);
+        ComponentNode createdNode =
+            (ComponentNode) nodeCreator.createNode("--- LAYOUT >> layout:custom, width:\"edge to edge\"");
+        assertThat(createdNode.hasInlineConfig()).isTrue();
+        assertThat(createdNode.getInlineConfig().get("layout")).isEqualTo("custom");
+        assertThat(createdNode.getInlineConfig().get("width")).isEqualTo("edge to edge");
+    }
+
+    @Test
     public void shouldConvertModifierStringToComponentNode() {
         ComponentNode node = new ComponentNode(3, ModifierNodeType.COLORS_MODIFIER);
         node.setModifierNode(true);
@@ -51,7 +69,7 @@ public class TreeViewBasedNodeCreatorTest {
     public void shouldConvertStringToConfigurationNode() {
         ReflectionTestUtils.setField(nodeCreator, "parser", parser, ConfigurationNodeConfigParser.class);
         when(parser.parseConfigurationValues("url:someUrl, color:blue"))
-                .thenReturn(Map.of("url", "someUrl", "color", "blue"));
+            .thenReturn(Map.of("url", "someUrl", "color", "blue"));
 
         ConfigurationNode node = (ConfigurationNode) nodeCreator.createNode("---* url:someUrl, color:blue");
         assertThat(node.get("url")).isEqualTo("someUrl");
@@ -81,36 +99,73 @@ public class TreeViewBasedNodeCreatorTest {
     @Test
     public void shouldThrowExceptionWhenConfigurationConsistsOnlyOfAKeyOrAValue() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> nodeCreator.createNode("--- asdsa"))
-                .withMessage("The provided line from the component tree is not valid: [--- asdsa]");
+            .isThrownBy(() -> nodeCreator.createNode("--- asdsa"))
+            .withMessage("The provided line from the component tree is not valid: [--- asdsa]");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenInlineConfigurationConsistsOnlyOfAKeyOrAValue() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> nodeCreator.createNode("- CONTAINER >> asdsa"))
+            .withMessage("The configuration node doesn't contain a valid key-value pair. "
+                + "They should be in the following format: <key>:<value>");
     }
 
     @Test
     public void shouldThrowExceptionWhenConfigurationHasNoKeyValueDelimiter() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> nodeCreator.createNode("---* asdsa"))
-                .withMessage("The configuration node doesn't contain a valid key-value pair. "
-                        + "They should be in the following format: <key>:<value>");
+            .isThrownBy(() -> nodeCreator.createNode("---* asdsa"))
+            .withMessage("The configuration node doesn't contain a valid key-value pair. "
+                + "They should be in the following format: <key>:<value>");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenInlineConfigurationHasNoKeyValueDelimiter() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> nodeCreator.createNode("--- IMAGE >> asdsa"))
+            .withMessage("The configuration node doesn't contain a valid key-value pair. "
+                + "They should be in the following format: <key>:<value>");
     }
 
     @Test
     public void shouldThrowExceptionWhenConfigurationEndsWithAKeyValuePairSeparator() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> nodeCreator.createNode("---* url: someurl,"))
-                .withMessage("The configuration node ends with a ':',"
-                        + " which is not considered a valid configuration node value.");
+            .isThrownBy(() -> nodeCreator.createNode("---* url: someurl,"))
+            .withMessage("The configuration node ends with a ':',"
+                + " which is not considered a valid configuration node value.");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenInlineConfigurationEndsWithAKeyValuePairSeparator() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> nodeCreator.createNode("--- IMAGE >> url: someurl,"))
+            .withMessage("The configuration node ends with a ':',"
+                + " which is not considered a valid configuration node value.");
     }
 
     @Test
     public void shouldThrowExceptionWhenConfigurationEndsWithAKeyValuePairSeparatorAndWhitespace() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> nodeCreator.createNode("---* url: someurl, "))
-                .withMessage("The configuration node ends with a ':',"
-                        + " which is not considered a valid configuration node value.");
+            .isThrownBy(() -> nodeCreator.createNode("---* url: someurl, "))
+            .withMessage("The configuration node ends with a ':',"
+                + " which is not considered a valid configuration node value.");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenInlineConfigurationEndsWithAKeyValuePairSeparatorAndWhitespace() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> nodeCreator.createNode("--- IMAGE >> url: someurl, "))
+            .withMessage("The configuration node ends with a ':',"
+                + " which is not considered a valid configuration node value.");
     }
 
     @Test
     public void shouldBeConfigurationNode() {
+        assertThat(TreeViewBasedNodeCreator.isConfigurationNode("-* url: something")).isTrue();
+    }
+
+    @Test
+    public void shouldBeParagraphNodeWithInlineConfiguration() {
         assertThat(TreeViewBasedNodeCreator.isConfigurationNode("-* url: something")).isTrue();
     }
 

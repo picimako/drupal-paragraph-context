@@ -15,10 +15,11 @@ import static io.picimako.drupal.context.util.StringUtils.isBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Parses a component tree string from a given format, iterates through its lines and based on what type of node a
+ * Parses a component tree string from a given format, iterates through its lines, and based on what type of node a
  * given line is in the tree (component or configuration), it acts accordingly:
  * <ul>
  *     <li>In case of Component nodes it saves the nodes in a {@link ComponentTree} and adds it to the content.</li>
+ *     <li>Optionally, if the Component node has an inline configuration, it invokes the related configurer.</li>
  *     <li>In case of Configuration nodes it executes the Gherkin steps or any other action mapped to the previously
  *     parsed and saved Component Node.</li>
  * </ul>
@@ -28,7 +29,7 @@ import static java.util.Objects.requireNonNull;
  * - CONTAINER <- This is a Component node at root (1) level.
  * -- LAYOUT
  * --- IMAGE   <- This is also a Component node at the 3rd level.
- * --- RICH_TEXT
+ * --- RICH_TEXT >> type:"Full HTML"     <- This is a Component node with an inline configuration.
  * ---* text: some text
  * -- LAYOUT
  * --- CAROUSEL
@@ -36,9 +37,12 @@ import static java.util.Objects.requireNonNull;
  * ----* url:https://some.url, initialTime:16    <- This is a Configuration node.
  *                                                  The level marker is only for consistency with the rest of the tree.
  * ---- VIDEO
- * ----* url:https://some.other/url, initialTime:10
+ * ----* url:https://some.other/url
+ * ----* initialTime:10     <- Configurations can be defined in multiple rows for the same component, and are handled as separate Configuration nodes.
  * -----@ ABSOLUTE_HEIGHT_MODIFIER    <- This is a Modifier Component node for the last VIDEO component.
  * </pre>
+ * Inline configurations in Component nodes are designed to provide a more concise and more readable layout. Regardless of whether
+ * a Component node has an inline configuration or not, further Configuration nodes can be defined right after them for the same Component.
  */
 public class ComponentTreeBasedContentAssembler {
 
@@ -82,10 +86,12 @@ public class ComponentTreeBasedContentAssembler {
      *           <li>if there is still another, not yet processed node, besides the current node in the tree,
      *           then it sets the path leading to the current node as the context,</li>
      *           <li>invokes the methods that add the component to the actual content/page.</li>
+     *           <li>if the Component node has an inline configuration, then after adding the component, it also invokes
+     *           the configurer to configure the component.</li>
      *          </ul></li>
      *       <li>In case of Configuration nodes it executes the Gherkin steps or any other actions
      *       mapped to the previously parsed and saved Component Node.
-     *       <p>
+     * <p>
      *       It also sets the component context but only when the configuration is not a root level one.</li>
      *      </ul></li>
      * </ul>
@@ -113,6 +119,9 @@ public class ComponentTreeBasedContentAssembler {
                 tree.addNode(currentNode, assemblerCtx.getPreviousComponentNode());
                 setComponentContext(currentNode, assemblerCtx);
                 componentAdder.addComponentToPage(tree.getParentNode(currentNode), currentNode);
+                if (currentNode.hasInlineConfig()) {
+                    componentConfigurer.configure(currentNode.getType(), currentNode.getInlineConfig());
+                }
                 assemblerCtx.setPreviousComponentNode(currentNode);
             } else {
                 if (assemblerCtx.getPreviousComponentNode() != ComponentNode.ABSENT) {
