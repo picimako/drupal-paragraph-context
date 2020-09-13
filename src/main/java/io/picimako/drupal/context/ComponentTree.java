@@ -85,7 +85,7 @@ public class ComponentTree {
      */
     public ComponentNode getParentNode(ComponentNode node) {
         //TODO: in case of modifiers the parent is not the component one level above but the last paragraph component
-        //TODO: with the same level under its immediate parent
+        // with the same level under its immediate parent
         Iterator<ComponentNode> iterator = graph.predecessors(node).iterator();
         return iterator.hasNext() ? iterator.next() : ABSENT;
     }

@@ -407,13 +407,6 @@
     </module>
     <module name="RegexpSingleline">
         <property name="severity" value="error"/>
-        <property name="format"
-                  value="org.springframework.web.util.JavaScriptUtils|org.springframework.web.util.HtmlUtils|org.apache.commons.lang.StringEscapeUtils|org.\apache.\commons.\codec|org\.owasp\.esapi"/>
-        <property name="message" value="use EncodingSupport for encoding"/>
-        <property name="id" value="BannedEncodingLibraryReference_Error"/>
-    </module>
-    <module name="RegexpSingleline">
-        <property name="severity" value="error"/>
         <property name="format" value="null !=|null =="/>
         <property name="message" value="Check for null in reverse order"/>
         <property name="id" value="ReverseOrderNullCheck_Error"/>

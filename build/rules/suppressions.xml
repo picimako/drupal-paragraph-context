@@ -3,6 +3,7 @@
 <suppressions>
     <!-- relax rules in unit tests, we need less docs and magic numbers are commonplace in tests -->
     <suppress checks="JavadocMethod|IllegalInstantiation|IllegalThrows|MagicNumber" files=".*Mock.*java|.*Test.java"/>
+    <suppress checks="RegexpSingleline" files="io.picimako.drupal.context.converter.TreeViewToDataTableConversionExecutor" />
     <!-- relax rules in package info files, they are not real classes -->
     <suppress checks="RegexpHeader" files=".*package-info.java"/>
     <!--<suppress checks="FileLength|RegexpHeader" files=".*.properties"/>-->

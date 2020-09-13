@@ -161,7 +161,7 @@ The table is expected to be in the following format:
 | >>>@ PADDING_MODIFIER | left:50px                             |  <- Modifier with configuration
 ```
 
-There is support for root-level configuration by defining the component as `<` but it considered valid only in the first
+There is support for root-level configuration by defining the component as `<` but it is considered valid only in the first
 data row of the table.
 
 There is also support for configurations to be defined in multiple table rows, in that case only the first occurrence
@@ -176,7 +176,7 @@ of the entry must include the component definition like this:
 
 The last two configurations are both applied to the same image component in this case.
 
-However if the table would defined as:
+However, if the table would be defined as:
 
 ```gherkin
 | > CONTAINER | bg:#fff             |
@@ -194,6 +194,25 @@ which one might have to introduce a kind of data table type converter.
 There is one another difference between this and the tree view based variants that in this case configurations
 don't have a prefix at all. They are simply defined in the right-hand side column.
 
+## Converters
+
+It might happen that you want to migrate from one component layout representation to the other,
+and for that purpose there is one converter for now to transition from the Tree View to the Table View layout.
+
+**Usage:**
+- download and copy the standalone `lib/converter/converter.jar` file to a folder
+- copy the component layouts (without any Gherkin specific surroundings) to text files.
+    - each tree view layout should be copied to a separate text file
+- copy these text files into the folder where the jar file is
+- run the jar file
+    - it accepts one or more arguments, the filenames of the text files to convert
+    - e.g. `java .jar converter.jar tree1.txt tree2.txt`
+
+As a result it will create separate text files for each source file, each having its name prefixed with `converted_`.
+
+The class that initiates the conversion is at `io.picimako.drupal.context.converter.TreeViewToDataTableConversionExecutor`,
+while the class that contains the actual conversion logic is `io.picimako.drupal.context.converter.TreeViewToDataTableConverter`.
+
 ## Additional notes, caveats
 
 - It is worth keeping in mind that depending on the structure of your project some classes may need to be moved to
@@ -209,5 +228,4 @@ The idea for the data table version came from a friend of mine, so a big thank y
 ## Future plans
 
 For easy migration between the two formats:
-- Create tree layout to data table format converter.
 - Create data table format to tree layout converter.
